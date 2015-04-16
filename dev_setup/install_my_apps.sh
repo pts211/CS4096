@@ -11,14 +11,32 @@ function install_dev
     #valgrind: memory leak check
     #kcachegrind: program efficiency stuff 
   echo "Installing the essentials..."
-  apt-get install build-essential git libgtest-dev cmake openssh-server valgrind kcachegrind graphviz
-
+  apt-get install build-essential git libgtest-dev cmake openssh-server valgrind kcachegrind graphviz doxygen gcc-4.8 g++-4.8 
+  
   #Install Google Test framework library
-  echo "Configuring Google test libraries..."
+  echo "Configuring Google Test libraries..."
   cd /usr/src/gtest
   cmake CmakeLists.txt
   make
   cp *.a /usr/lib
+  echo "Google Test configuration complete."
+  
+  #Install libftdi library
+  echo "Installing LibFTDI library..."
+  apt-get install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev
+  
+  cd ~
+  mkdir libftdi
+  cd libftdi
+  git clone git://developer.intra2net.com/libftdi
+  cd libftdi
+  mkdir build
+  cd build
+  cmake  -DCMAKE_INSTALL_PREFIX="/usr" ../
+  make
+  sudo make install
+
+  echo "LibFTDI instal complete."
 }
 
 function install_qt_dep {
@@ -78,8 +96,8 @@ function install_tools {
 }
 user=paul
 pass=safe
-install_dev
-#samba_add
+#install_dev
+samba_add
 #install_qt_dep
 #install_WiringPi
 #install_tools
