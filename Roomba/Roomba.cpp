@@ -4,14 +4,6 @@
 // $Id: Roomba.cpp,v 1.1 2010/09/27 21:58:32 mikem Exp mikem $
 
 #include "Roomba.h"
-/*
-Roomba::Roomba(HardwareSerial* serial, Baud baud)
-{
-  _serial = serial;
-  _baud = baudCodeToBaudRate(baud);
-  _pollState = PollStateIdle;
-}
-*/
 
 Roomba::Roomba()
 {
@@ -20,41 +12,114 @@ Roomba::Roomba()
 
 Roomba::~Roomba()
 {
+  int ret = 0;
   if ((ret = ftdi_usb_close(ftdi)) < 0){
     fprintf(stderr, "unable to close ftdi device: %d (%s)\n", ret, ftdi_get_error_string(ftdi));
     ftdi_free(ftdi);
-    return EXIT_FAILURE;
   }
   ftdi_free(ftdi);
 }
 
 void Roomba::start()
 {
+  int ret = 0;
   if((ftdi = ftdi_new()) == 0){
     fprintf(stderr, "ftdi_new failed\n");
-    return EXIT_FAILURE;
   }
   if ((ret = ftdi_usb_open(ftdi, 0x0403, 0x6001)) < 0){
     fprintf(stderr, "ERROR: Unable to open FTDI devide: %d (%s)\n", ret, ftdi_get_error_string(ftdi));
     ftdi_free(ftdi);
-    return EXIT_FAILURE;
   }
+  
+  setFTDIBaud(BAUDRATE);
+  
+  // setDTR(0);
+  // write(Opcode::START);
+  // write(Mode::CONTROL);
+  // write(Mode::MAX);
+  //write(128);
+  //write(130);
+  //write(136);
+}
+
+void Roomba::setBaud(unsigned char baud)
+{
+  write(Opcode::BAUD);
+  write(baud);
+  
+  //TODO setFTDIBaud() Would need to figure out a way to get an int value of the baud to be set...
+}
+
+void Roomba::setMode(unsigned char mode)
+{
+  write(mode);
+}
+
+void Roomba::drive(int velocity, int radius)
+{
+
 
 }
 
-//void Roomba::setBaud(BAUD b)
-void Roomba::setBaud(int b)
+void Roomba::powerOn()
 {
-  cout<<b<<endl;
-  
-  int f = ftdi_set_baudrate(ftdi, BAUDRATE);
+  setDTR(1);
+  delay(500);
+  setDTR(0);
+  delay(500);
+  setDTR(1);
+}
+
+void Roomba::powerOff()
+{
+  write(Opcode::START);
+  write(Mode::POWER);
+}
+
+/******************** PRIVATE ********************/
+void Roomba::write(unsigned char cmd)
+{
+  ftdi_write_data(ftdi, &cmd, 1);
+}
+
+void Roomba::setFTDIBaud(unsigned int baud)
+{
+  int f = ftdi_set_baudrate(ftdi, baud);
   if (f < 0){
       fprintf(stderr, "Unable to set baudrate: %d (%s)\n", f, ftdi_get_error_string(ftdi));
       exit(-1);
   }
-  //ftdi_write_data(ftdi, OPCODE::BAUD, 1);
-  //ftdi_write_data(ftdi, &opc, 1);
 }
+
+bool Roomba::setDTR(const int state)
+{
+  return (ftdi_setdtr(ftdi, state) == 0)?true:false;
+}
+
+/*
+void Roomba::sleep(unsigned int mseconds)
+{
+    clock_t goal = mseconds + clock();
+    while (goal > clock());
+}
+*/
+
+void Roomba::delay(unsigned int howLong)
+{
+  struct timespec sleeper ;
+
+  if (howLong ==   0)
+    return ;
+  else if (howLong  < 100)
+    cout<<"NOT LONG ENOUGH!"<<endl;
+  else
+  {
+    sleeper.tv_sec  = 0 ;
+    sleeper.tv_nsec = (long)(howLong * 1000) ;
+    nanosleep (&sleeper, NULL) ;
+  }
+}
+
 /*
 // Resets the 
 void Roomba::reset()
