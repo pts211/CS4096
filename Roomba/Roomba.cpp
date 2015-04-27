@@ -1,13 +1,13 @@
 // Roomba.cpp
 //
-// Copyright (C) 2010 Mike McCauley
-// $Id: Roomba.cpp,v 1.1 2010/09/27 21:58:32 mikem Exp mikem $
+
 
 #include "Roomba.h"
 
 Roomba::Roomba()
 {
-  //
+  led_pwr_c = 0;
+  led_pwr_i = 0;
 }
 
 Roomba::~Roomba()
@@ -37,9 +37,7 @@ void Roomba::start()
   // write(Opcode::START);
   // write(Mode::CONTROL);
   // write(Mode::MAX);
-  //write(128);
-  //write(130);
-  //write(136);
+  
 }
 
 void Roomba::setBaud(unsigned char baud)
@@ -53,12 +51,62 @@ void Roomba::setBaud(unsigned char baud)
 void Roomba::setMode(unsigned char mode)
 {
   write(mode);
+  delay(101);
 }
 
-void Roomba::drive(int velocity, int radius)
+bool Roomba::getSensors(int sensor_pkt)
 {
+  write(Opcode::SENSOR);
+  write(sensor_pkt);
+  
+  switch(sensor_pkt)
+  {
+    case Sensor::ALL:
+      read(26); //MAGIC NUMBERS!! WOOO. 
+    break;
+    case Sensor::ENVIRONMENT:
+      read(10); //Actually, this is just the number of bytes
+    break;
+    case Sensor::PHYSICAL:
+      read(6); //that will come back from the read call.
+    break;
+    case Sensor::SYSTEM:
+      read(10); //I didn't feel like making constants.
+    break;
+  }
+  
+  sensors.print();
+  
+  return true;
+}
 
+void Roomba::drive(int16_t velocity, int16_t radius)
+{
+  cout<<"Driving - Velocity: "<<velocity<<" Radius: "<<radius<<endl; 
+  write(Opcode::DRIVE);
+  write((velocity & 0xff00) >> 8);
+  write(velocity & 0xff);
+  write((radius & 0xff00) >> 8);
+  write(radius & 0xff);
+}
 
+void Roomba::setLED(int led_id, bool state, int pwr_c, int pwr_i)
+{
+  if(pwr_c == -1 || pwr_i == -1){
+    pwr_c = led_pwr_c;
+    pwr_i = led_pwr_i;
+  }else{
+    led_pwr_c = pwr_c;
+    led_pwr_i = pwr_i;
+  }
+  
+  //led_bs.reset(); // To reset everything, if desired.
+  led_bs.set(led_id, state);
+  
+  write(Opcode::LEDS);
+  write( static_cast<unsigned char>(led_bs.to_ulong()) );
+  write(pwr_c);
+  write(pwr_i);
 }
 
 void Roomba::powerOn()
@@ -68,6 +116,15 @@ void Roomba::powerOn()
   setDTR(0);
   delay(500);
   setDTR(1);
+  
+  delay(50);
+  
+  write(Opcode::START);
+  write(Mode::CONTROL);
+  write(Mode::FULL);
+  delay(101);
+  
+  setLED(0, false, 0, 255);
 }
 
 void Roomba::powerOff()
@@ -79,7 +136,30 @@ void Roomba::powerOff()
 /******************** PRIVATE ********************/
 void Roomba::write(unsigned char cmd)
 {
+  //int iCMD = cmd;
+  //cout<<iCMD<<endl;
   ftdi_write_data(ftdi, &cmd, 1);
+  delay(1);
+}
+
+void Roomba::read(int numBytes)
+{
+  unsigned char *rec = new unsigned char[MAX_SENSOR_BYTES];
+  delay(200);
+  while(ftdi_read_data(ftdi, rec, MAX_SENSOR_BYTES) > 0) {}
+  /*
+  {
+    for (int i= 0; i < MAX_SENSOR_BYTES; i++) {
+      int iCMD = rec[i];
+      cout<<iCMD<<endl; //printf("%02X ", rec[i]);
+    }
+    
+    cout<<"---------- ITERATION COMPLETE ----------"<<endl;
+  }
+  */
+  //cout<<"LOOP FINISHED"<<endl;
+  
+  sensors.parseSensorData(0, rec);
 }
 
 void Roomba::setFTDIBaud(unsigned int baud)
@@ -96,6 +176,30 @@ bool Roomba::setDTR(const int state)
   return (ftdi_setdtr(ftdi, state) == 0)?true:false;
 }
 
+
+// Reads at most len bytes and stores them to dest
+// If successful, returns true.
+// If there is a timeout, returns false
+// Blocks until all bytes are read
+// Caller must ensure there is sufficient space in dest
+/*
+bool Roomba::read(uint8_t* dest, uint8_t len)
+{
+  ftdi_read_data(ftdi, &buff)
+  while (len-- > 0)
+  {
+    unsigned long startTime = millis();
+    while (!_serial->available())
+    {
+      // Look for a timeout
+      if (millis() > startTime + ROOMBA_READ_TIMEOUT)
+        return false; // Timed out
+    }
+    *dest++ = _serial->read();
+  }
+  return true;
+}
+*/
 /*
 void Roomba::sleep(unsigned int mseconds)
 {
@@ -104,6 +208,7 @@ void Roomba::sleep(unsigned int mseconds)
 }
 */
 
+/*
 void Roomba::delay(unsigned int howLong)
 {
   struct timespec sleeper ;
@@ -119,6 +224,7 @@ void Roomba::delay(unsigned int howLong)
     nanosleep (&sleeper, NULL) ;
   }
 }
+*/
 
 /*
 // Resets the 

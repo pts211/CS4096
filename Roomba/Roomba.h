@@ -1,5 +1,5 @@
-//#ifdef Roomba_H
-//#define Roomba_H
+#ifndef Roomba_H
+#define Roomba_H
 
 #define LOWBYTE(v)   ((unsigned char) (v))
 #define HIGHBYTE(v)  ((unsigned char) (((unsigned int) (v)) >> 8))
@@ -8,13 +8,16 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string.h>
+#include <bitset>
 #include <ftdi.h>
 
-using namespace std;
+#include "RoombaSensors.h"
 
+using namespace std;
+void delay( unsigned long ms );
 
 /* -------------------- MY ROOMBA -------------------- */
-
+/*
 enum class SENSOR : std::int8_t {
   WALL = 1,
   CLIFF_LEFT = 2,
@@ -32,12 +35,15 @@ enum class MOTORS : std::int8_t {
   VACUUM = 1,      // BIT 1
   SIDE_BRUSH = 2   // BIT 0
 };
-
+*/
 struct Opcode
 {
   enum LocalOpcode : unsigned char {
     START = 128,
     BAUD = 129,
+    DRIVE = 137,
+    LEDS = 139,
+    SENSOR = 142,
   };
 };
 
@@ -72,10 +78,32 @@ struct Mode
   };
 };
 
+struct LED
+{
+  enum LocalLED : int {
+    DIRT_DETECT = 0,
+    MAX = 1,
+    CLEAN = 2,
+    SPOT = 3,
+    STATUS = 4,
+  };
+};
+
+struct Sensor
+{
+  enum LocalSensor : int {
+    ALL = 0,
+    ENVIRONMENT = 1,
+    PHYSICAL = 2,
+    SYSTEM = 3,
+  };
+};
+
 class Roomba
 {
   public:
     static const int BAUDRATE = 57600;
+    //static const int BAUDRATE = 19200;
     
     Roomba();
     //Roomba( BAUD );
@@ -87,13 +115,25 @@ class Roomba
     
     void setMode(unsigned char mode);
     
-    void drive(int velocity, int radius);
+    bool getSensors(int sensor_pkt);
+    
+    // Velocity: -500 <> 500 mm/s
+    // Radius:   -2000 <> 2000 mm/s
+    // Straight = 32768
+    // Zero-turn CW: -1
+    // Zero-turn CCW: 1
+    void drive(int16_t velocity, int16_t radius);
+    
+    void setLED(int led_id, bool state, int pwr_c = -1, int pwr_i = -1);
     
     void powerOn();
     
     void powerOff();
     
-    void delay(unsigned int howLong);
+    //void delay(unsigned int howLong);
+    
+    void write(unsigned char cmd);
+    void read(int numBytes);
     //Set the Roomba operating mode.
     /*
     setMode( ENUM::MODE );
@@ -133,9 +173,14 @@ class Roomba
     float getBatteryPercent();    
   */
   private:
+    static const int MAX_SENSOR_BYTES = 26;
+    RoombaSensors sensors;
     struct ftdi_context *ftdi;
     
-    void write(unsigned char cmd);
+    bitset<8> led_bs;
+    int led_pwr_c;
+    int led_pwr_i;
+    
     void setFTDIBaud(unsigned int baud);
     bool setDTR(const int state);
     //void sleep(unsigned int mseconds);
@@ -144,4 +189,4 @@ class Roomba
 
 
 /* -------------------- MY ROOMBA END -------------------- */
-//#endif
+#endif
