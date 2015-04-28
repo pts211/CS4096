@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <pair>
 using namespace std;
 
 struct Node
@@ -26,7 +27,7 @@ class Navigation
 	private:
 		void WalkPath(vector<Node*> path);
 		vector<Node> allNodes;
-		map<Node*, Node*> weights;		
-};
+		map< pair<Node*, Node*>, int> weights;
+	};
 
 #endif
