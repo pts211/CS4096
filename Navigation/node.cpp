@@ -7,3 +7,7 @@ Node::Node(string name) {
 void Node::SetChild(Node* child) {
 	this->child = child;
 }
+
+void Node::AddNodeToNeighbors(Node* n) {
+	this->neighbors.push_back(n);
+}

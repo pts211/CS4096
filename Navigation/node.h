@@ -13,7 +13,7 @@ class Node {
 	private:
 		string name;
 		Node* child;
-		vector<Node> neighbors;
+		vector<Node*> neighbors;
 };
 
 #endif
