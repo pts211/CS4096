@@ -1,8 +1,8 @@
 #include "Navigation.h"
 #include <fstream>
-#include <iostream>
-#include <string>
-#include <cstring>
+// #include <iostream>
+// #include <string>
+// #include <cstring>
 // #include <dirent.h>
 
 void Navigation::InputNodes() {
@@ -22,7 +22,10 @@ void Navigation::InputNodes() {
 
 	if(in.good()) {
 		getline(in, inStr);
-		numNodes = atoi(in.c_str());
+		numNodes = atoi(inStr.c_str());
+		for(int i = 0; i < numNodes; i++) {
+			
+		}
 	}
 }
 
