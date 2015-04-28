@@ -3,15 +3,13 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
+#include <set>
 using namespace std;
 
-class Node
+struct Node
 {
-	public:
-		Node(string name);
-		void AddNodeToNeighbors(Node* n);
-		void SetChild(Node* child);
-	private:
+		Node(string name): name(name) {}
 		string name;
 		Node* child;
 		vector<Node*> neighbors;
@@ -27,8 +25,8 @@ class Navigation
 		void NavigateToNode(Node* source, Node* sink);
 	private:
 		void WalkPath(vector<Node*> path);
-		vector<Node*> allNodes;
-		
+		vector<Node> allNodes;
+		map<Node*, Node*> weights;		
 };
 
 #endif
