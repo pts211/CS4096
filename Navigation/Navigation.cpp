@@ -21,10 +21,22 @@ void Navigation::InputNodes() {
 	int numNodes;
 
 	if(in.good()) {
-		getline(in, inStr);
+		getline(in, inStr); //read the number of nodes
 		numNodes = atoi(inStr.c_str());
 		for(int i = 0; i < numNodes; i++) {
-			
+			getline(in, inStr); //read the name of a node
+			Node n(inStr);
+			allNodes.push_back(n);	
+		}
+
+		for(int i = 0; i < numNodes; i++) {
+			getline(in, inStr); //read the number of neighbors a node has
+			for(int j = 0; j < atoi(inStr.c_str()); j++) {
+				getline(in, inStr, ','); //read the nodes neighbor
+				allNodes[i].neighbors.push_back(&allNodes[atoi(inStr.c_str())]); //store the node in the list of neighbors
+				getline(in, inStr, ','); //read the neighbors weight
+				
+			}
 		}
 	}
 }
