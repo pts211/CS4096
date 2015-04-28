@@ -6,36 +6,28 @@
 // #include <dirent.h>
 
 void Navigation::InputNodes() {
-	// DIR* FD;
-	// dirent* in_file;
-
-	// if(NULL == (FD = opendir(nodeFilePath.c_str()))) {
-	// 	cout << "ERROR: Node file not found." << endl;
-	// }
-
-	// while((in_file = readdir(FD))) {
-
-	// }
 	ifstream in;
 	string inStr;
 	int numNodes;
 
-	if(in.good()) {
+	in.open("SampleFactory.txt");
+
+	if(in.good()) { //if the file was successfully opened
 		getline(in, inStr); //read the number of nodes
-		numNodes = atoi(inStr.c_str());
-		for(int i = 0; i < numNodes; i++) {
+		numNodes = atoi(inStr.c_str()); //change the string we read to an int
+		for(int i = 0; i < numNodes; i++) { //loop for each node we have
 			getline(in, inStr); //read the name of a node
-			Node n(inStr);
-			allNodes.push_back(n);	
+			Node n(inStr); //create a new node
+			allNodes.push_back(n); //put that node in the list of all nodes
 		}
 
-		for(int i = 0; i < numNodes; i++) {
+		for(int i = 0; i < numNodes; i++) { //loop for each node we have
 			getline(in, inStr); //read the number of neighbors a node has
-			for(int j = 0; j < atoi(inStr.c_str()); j++) {
+			for(int j = 0; j < atoi(inStr.c_str()); j++) { //loop for each neighbor of a node
 				getline(in, inStr, ','); //read the nodes neighbor
 				allNodes[i].neighbors.push_back(&allNodes[atoi(inStr.c_str())]); //store the node in the list of neighbors
-				getline(in, inStr, ','); //read the neighbors weight
-				
+				getline(in, inStr, ':'); //read the neighbors weight
+				weights[make_pair(allNodes[i], allNodes[i].neighbors[j])] = atoi(inStr.c_str()); //assign the weight
 			}
 		}
 	}

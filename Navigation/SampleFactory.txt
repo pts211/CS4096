@@ -1,0 +1,19 @@
+4
+node1
+node2
+node3
+node4
+2
+2,10:4,15
+2
+1,10:3,10
+2
+2,10:4,5
+2
+1,15:3,5
+
+//FORMAT
+Number of nodes
+Names of nodes
+Number of neighbors
+Neighbor,Weight:Neighbor,Weight:Neighbor,Weight....
