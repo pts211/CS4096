@@ -27,7 +27,6 @@ class Navigation
 		void NavigateToNode(Node* source, Node* sink);
 	private:
 		void WalkPath(vector<Node*> path);
-
 		vector<Node*> allNodes;
 		
 };
