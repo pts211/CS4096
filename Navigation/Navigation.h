@@ -5,7 +5,8 @@
 #include <vector>
 using namespace std;
 
-class Node {
+class Node
+{
 	public:
 		Node(string name);
 		void AddNodeToNeighbors(Node* n);
@@ -16,11 +17,14 @@ class Node {
 		vector<Node*> neighbors;
 };
 
-class Navigation {
+class Navigation
+{
 	public:
 		Navigation();
 		void InputNodes();
-		void NavigateToNode(Node* sink);
+		vector<Node*> reconstruct_path(map<Node*, Node*>& cameFrom, Node* current);
+		Node* minCostNode(set<Node*>& openSet, map<Node*, int>& f_cost);
+		void NavigateToNode(Node* source, Node* sink);
 	private:
 		void WalkPath(vector<Node*> path);
 
