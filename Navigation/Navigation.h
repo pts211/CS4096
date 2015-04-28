@@ -16,4 +16,16 @@ class Node {
 		vector<Node*> neighbors;
 };
 
+class Navigation {
+	public:
+		Navigation();
+		void InputNodes();
+		void NavigateToNode(Node* sink);
+	private:
+		void WalkPath(vector<Node*> path);
+
+		vector<Node*> allNodes;
+		
+};
+
 #endif
