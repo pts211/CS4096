@@ -23,7 +23,27 @@ function install_dev
   
   #Install libftdi library
   echo "Installing LibFTDI library..."
-  apt-get install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev
+  apt-get install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev libftdi-dev
+  
+  #This might not be needed.
+  #cd ~
+  #mkdir libftdi
+  #cd libftdi
+  #git clone git://developer.intra2net.com/libftdi
+  #cd libftdi
+  #mkdir build
+  #cd build
+  #cmake  -DCMAKE_INSTALL_PREFIX="/usr" ../
+  #make
+  #sudo make install
+
+  echo "LibFTDI instal complete."
+}
+
+function install_libftdi {
+  #Install libftdi library
+  echo "Installing LibFTDI library..."
+  apt-get install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev libftdi-dev
   
   cd ~
   mkdir libftdi
@@ -37,6 +57,7 @@ function install_dev
   sudo make install
 
   echo "LibFTDI instal complete."
+
 }
 
 function install_qt_dep {
@@ -97,7 +118,8 @@ function install_tools {
 user=paul
 pass=safe
 #install_dev
-samba_add
+#install_libftdi
+#samba_add
 #install_qt_dep
 #install_WiringPi
 #install_tools

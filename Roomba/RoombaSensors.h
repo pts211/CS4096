@@ -60,6 +60,7 @@ class RoombaSensors
     double getAngle(int which = 0) { 
       if( which == 0 ) { return (360.0*(double)angle)/(258.0*PI); }   //Degrees
       else if( which == 1 ) { return (( 2.0*(double)angle)/258.0 ); } //Radians
+      return 0; //Get rid of stupid compiler warnings.
     }
     
     char getChargingState() { return charging_state; }

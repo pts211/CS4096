@@ -75,8 +75,6 @@ bool Roomba::getSensors(int sensor_pkt)
     break;
   }
   
-  sensors.print();
-  
   return true;
 }
 

@@ -109,6 +109,10 @@ class Roomba
     //Roomba( BAUD );
     ~Roomba();
     
+    //TODO It might be good to make a call to the Roomba when a sensor is wanting to be read.
+    //However, it might cause problems for distance and angle. So, maybe not. (Look into it).
+    RoombaSensors getSensor() { return sensors; }
+    
   /* Roomba SCI Commands */
     void start();
     void setBaud(unsigned char baud);
