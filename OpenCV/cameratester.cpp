@@ -8,6 +8,8 @@ using namespace std;
 int main()
 {
 	camera cam;
+ 
+ 
 	while(1)
 	{
 		cam.update();
