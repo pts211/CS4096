@@ -23,13 +23,22 @@ struct Node
 class Navigation
 {
 public:
+	int numNodes;
+
+	Navigation() {};
 	Navigation(const char* filename);
 	void inputNodes(const char* filename);
 	bool travelFromSourceToSink(Node* source, Node* sink);
+	Node* getNode(int index);
+
+	//Used to test private functions
+	vector<Node*> dbgReconstructPath(Node* current);
+	vector<Node*> dbgFindPath(Node* source, Node* sink);
+
 private:
 	bool walkPath(const vector<Node*>& path);
 	vector<Node*> findPath(Node* source, Node* sink);
-	vector<Node*> reconstruct_path(Node* current);
+	vector<Node*> reconstructPath(Node* current);
 	void outputPath(const vector<Node*>& path);
 	void outputAllNodes();
 	vector<Node> allNodes;
