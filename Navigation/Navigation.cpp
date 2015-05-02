@@ -65,7 +65,9 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   {
     //path from CURRENT place to sink Node                                                  FIX THIS
     path = findPath(source, sink); //should be (current, sink) with current starting at source
-    outputPath(path);
+    #ifndef TEST 
+    outputPath(path); 
+    #endif
     arrived = walkPath(path);
   }
 

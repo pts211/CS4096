@@ -17,14 +17,19 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 
+	system("clear");
+	cout << "Running test on Navigation::inputNodes" << endl;
 	testInputNodes(argv[1]);
-	cout << "[PASS] Navigation::inputNodes" << endl;
+	cout << "[PASS] Navigation::inputNodes" << endl << endl;
+	cout << "Running test on Navigation::reconstructPath" << endl;
 	testReconstructPath(argv[1]);
-	cout << "[PASS] Navigation::reconstructPath" << endl;
+	cout << "[PASS] Navigation::reconstructPath" << endl << endl;
 	testFindPath(argv[1]);
-	cout << "[PASS] Navigation::findPath" << endl;
+	cout << "Running test on Navigation::findPath" << endl;
+	cout << "[PASS] Navigation::findPath" << endl << endl;
 	testTravelFromSourceToSink(argv[1]);
-	cout << "[PASS] Navigation::travelFromSourceToSink" << endl;
+	cout << "Running test on Navigation::travelFromSourceToSink" << endl;
+	cout << "[PASS] Navigation::travelFromSourceToSink" << endl << endl;
 
 	return 0;
 }
