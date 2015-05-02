@@ -11,7 +11,7 @@ int main()
 	while(1)
 	{
 		cam.update();
-		cout << cam << endl;
+		cam.output();
 	}
 
 

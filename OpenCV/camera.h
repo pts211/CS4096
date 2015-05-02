@@ -18,7 +18,8 @@
 #include <string>
 #include <math.h>
 
-
+using namespace std;
+using namespace cv;
 
 //For creating trackbars for debugging
 void createTrackbars();
@@ -33,11 +34,6 @@ const int G_LIM = 255;
 int R_MAX = 80;
 const int R_LIM = 255;
 
-
-
-
-//<< operator overload for debugging
-std::ostream& operator<< (std::ostream& out, const camera& cam);
 
 class camera
 {
@@ -63,6 +59,8 @@ public:
 	void update();
 
 	//ACCESSORS
+ 
+  void output();
 
 	Mat getinput() const;
 
@@ -72,30 +70,10 @@ public:
 	bool getpathisblocked() const;
 
 	string getfloorsign() const;
-	
 
 };//end class camera
 
 
-
-
-
-std::ostream& operator<< (std::ostream& out, const camera& cam)
-{
-
-
-	namedWindow("MyVideo",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
-	imshow("MyVideo", cam.getinput()); //show the frame in "MyVideo" window
-	if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-	{
-		out << "esc key is pressed by user\n";
-	}
-
-	out << "[ " << cam.getpathisblocked() << ", " << cam.getfloorsign() << ", " << cam.gete_slope() << ", " << cam.getc_slope() << " ]";
-
-
-  return out;
-}
 
 void on_trackbar( int, void* )
 {//This function gets called whenever a
@@ -125,6 +103,8 @@ void createTrackbars()
 	//    
 	return;
 }
+
+#include "camera.hpp"
 
 
 #endif

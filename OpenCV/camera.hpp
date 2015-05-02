@@ -1,5 +1,3 @@
-#include "camera.h"
-
 using namespace std;
 using namespace cv;
 
@@ -359,6 +357,22 @@ void camera::update()
 	return;
 }
 
+void camera::output()
+{
+  	namedWindow("MyVideo",CV_WINDOW_AUTOSIZE); //create a window called "MyVideo"
+  	imshow("MyVideo", input); //show the frame in "MyVideo" window
+  	if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+  	{
+  		cout << "esc key is pressed by user" << endl;
+      exit(1);
+  	}
+  
+  	cout << "[ " << pathisblocked << ", " << floorsign << ", " << e_slope << ", " << c_slope << " ]" << endl;
+  
+    return;
+}
+
+
 Mat camera::getinput() const
 {
 	return input;
@@ -379,7 +393,7 @@ bool camera::getpathisblocked() const
 	return pathisblocked;
 }
 
-string camera::getfloorsign()
+string camera::getfloorsign() const
 {
 	return floorsign;
 }
