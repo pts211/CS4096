@@ -1,150 +1,160 @@
 #include "Navigation.h"
 #include <fstream>
+#include <queue>
 // #include <iostream>
 // #include <string>
 // #include <cstring>
 // #include <dirent.h>
 
-void Navigation::InputNodes() {
+using namespace std;
+
+double Node::DNE = 1000000.0;
+
+Navigation::Navigation(const char* filename)
+{
+  inputNodes(filename); //forgot what your formwat was clayton and don't want to deal with it too much
+  if(allNodes.size() > 1) //keep in mind, the output path doesn't include the source
+  {
+    cout << "from " << allNodes[0].name << " to " << allNodes[allNodes.size()-1].name << endl;
+    travelFromSourceToSink(&allNodes[0], &allNodes[allNodes.size()-1]); 
+  }
+}
+
+void Navigation::inputNodes(const char* filename)
+{
 	ifstream in;
 	string inStr;
 	int numNodes;
 
-	in.open("SampleFactory.txt");
+	in.open(filename);
 
-	if(in.good()) { //if the file was successfully opened
+	if(in.good())
+  { //if the file was successfully opened
 		getline(in, inStr); //read the number of nodes
 		numNodes = atoi(inStr.c_str()); //change the string we read to an int
-		for(int i = 0; i < numNodes; i++) { //loop for each node we have
+		for(int i = 0; i < numNodes; i++)
+    { //loop for each node we have
 			getline(in, inStr); //read the name of a node
-			Node n(inStr); //create a new node
+      //cout << inStr << endl;
+			Node n(inStr, Node::DNE); //create a new node with nonexistant g value
+      n.parent = NULL;
 			allNodes.push_back(n); //put that node in the list of all nodes
 		}
 
-		for(int i = 0; i < numNodes; i++) { //loop for each node we have
+		for(int i = 0; i < numNodes; i++)
+    { //loop for each node we have
 			getline(in, inStr); //read the number of neighbors a node has
-			for(int j = 0; j < atoi(inStr.c_str()); j++) { //loop for each neighbor of a node
+      cout << "numNeighbors :: " << atoi(inStr.c_str()) << endl; //output is wrong here
+			for(int j = 0; j < atoi(inStr.c_str()); j++)
+      { //loop for each neighbor of a node
 				getline(in, inStr, ','); //read the nodes neighbor
 				allNodes[i].neighbors.push_back(&allNodes[atoi(inStr.c_str())]); //store the node in the list of neighbors
 				getline(in, inStr, ':'); //read the neighbors weight
-				weights[make_pair(allNodes[i], allNodes[i].neighbors[j])] = atoi(inStr.c_str()); //assign the weight
+				allNodes[i].weights.push_back(atoi(inStr.c_str())); //assign the weight
 			}
 		}
 	}
 }
 
-vector<Node*> Navigation::reconstruct_path(map<Node*, Node*>& cameFrom, Node* current)
+bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
 {
   vector<Node*> path;
-  while(cameFrom.find(current) != cameFrom.end())
+  //while not yet there...
+  bool arrived = false;
+  while(!arrived)
   {
-    path.insert(path.begin(), current);
-    current = cameFrom[current];
+    //path from CURRENT place to sink Node                                                  FIX THIS
+    path = findPath(source, sink); //should be (current, sink) with current starting at source
+    outputPath(path);
+    arrived = walkPath(path);
   }
-  return path;
+
+  return true; //or false if ???
 }
 
-Node* Navigation::minCostNode(set<Node*>& openSet, map<Node*, int>& f_cost)
+bool Navigation::walkPath(const vector<Node*>& path)
 {
-  Node* Node;
-  int minCost = 100000;
-  for(set<Node*>::iterator i = openSet.begin(); i != openSet.end(); ++i)
-  {
-    if(f_cost.find(*i) != f_cost.end())
-      if(f_cost[*i] < minCost)
-      {
-        minCost = f_cost[*i];
-        Node = *i;
-      }
-  }
-  return Node;
+  //walk the walk using roomba commands
+
+  //if blocked, restart pathfinding from current spot.
+  return true;
 }
 
-void Navigation::NavigateToNode(Node* source, Node* sink)
+//this is now BFS not A*... because we don't know a heuristic and it don't matter anyway (small graphs)
+vector<Node*> Navigation::findPath(Node* source, Node* sink)
 {
-  //cout << "NavigateToNode" << endl;
-  //The set of nodes already evaluated.
-  set<Node*> closedSet;
-  //The set of tentative Nodes that need to be evaluated, starting with sink (searching backwards)
-  set<Node*> openSet;
-  openSet.insert(sink);
-  //The map of navigated nodes.
-  map<Node*, Node*> cameFrom;
-  //Cost from start along best known path.
-  map<Node*, int> g_score;
-  g_score[source] = 0;
-  //total cost of its possible path, f = g + manhattanDistance(current, sink)
-  map<Node*, int> f_score;
-  f_score[source] = manhattanDistance(source, sink);
+  //cout << "findPath" << endl;
+  for(size_t i=0; i<allNodes.size(); ++i)
+  {
+    allNodes[i].g_score = Node::DNE;
+    allNodes[i].parent = NULL;
+  }
+
+  source->g_score = 0.0;
+  //The set of tentative Nodes that need to be evaluated, starting with sink 
+  queue<Node*> openSet;
+  openSet.push(source);
 
   //while openset is not empty
   while(!openSet.empty())
   {
-    //cout << "loop openSet.size() > 0 :: " << openSet.size() << endl;
-    //current = the node in openset having the lowest f_score[] value
-    Node* current = minCostNode(openSet, f_score);
-    //if current = goal
-    if(NodesAreEqual(current, sink))
-      //return reconstruct_path(came_from, goal)
-      return reconstruct_path(cameFrom, sink);
+    //cout << "loop openSet.size() :: " << openSet.size() << endl;
+    Node* current = openSet.front();
+    cout << current->name << endl;
+    openSet.pop();
 
-    //remove current from openset
-    openSet.erase(current);
-    //add current to closedset
-    closedSet.insert(current);
-    //for each neighbor in neighbor_nodes(current)
-    vector<Node*> neighbors = getNeighbors(current);
-    for(size_t i=0; i<neighbors.size(); i++)
+    //for each neighbor in current->neighbors
+    //cout << "neighbors.size() :: " << current->neighbors.size() << endl;
+    for(size_t i=0; i<current->neighbors.size(); ++i)
     {
-      Node* neighbor = neighbors[i];
+      Node* neighbor = current->neighbors[i];
       if(neighbor == NULL)
         continue;
-      int tentative_g_score = g_score[current] + weights[NodesKeyAt(neighbor)];
-      //if it's not a valid place to step
-      if(!validSteps[NodesKeyAt(neighbor)])
+      double tempScore = current->g_score + current->weights[i];
+      //if neighbor not yet evaluated or better score
+      if(neighbor->g_score == Node::DNE || tempScore < neighbor->g_score)
       {
-        //if we wanted to stop right before we got there and it's the sink, then we're done!
-        if(stopBeforeArrival && NodesAreEqual(neighbor, sink))
-        {
-          sinkIsNeighbor = true;
-          return reconstruct_path(cameFrom, current);
-        }
-        else //else this is just an invalid Node to step on :(
-          continue;
-      }
-
-      //tentative_f_score = tentative_g_score + manhattanDistance(neighbor, goal)
-      int tentative_f_score = tentative_g_score + manhattanDistance(neighbor, sink);
-
-      if(f_score.find(neighbor) == f_score.end())
-        f_score[neighbor] = 100000;
-      //if neighbor in closedset
-      if(closedSet.find(neighbor) != closedSet.end())
-      {
-        //if tentative_f_score >= f_score[neighbor]
-        if(tentative_f_score >= f_score[neighbor])
-            //continue
-            continue;
-      }
-
-      //if neighbor not in openset or tentative_f_score < f_score[neighbor]
-      if(openSet.find(neighbor) == openSet.end() || tentative_f_score < f_score[neighbor])
-      {
-        //came_from[neighbor] = current
-        cameFrom[neighbor] = current;
-        //g_score[neighbor] = tentative_g_score
-        g_score[neighbor] = tentative_g_score;
-        //f_score[neighbor] = tentative_f_score
-        f_score[neighbor] = tentative_f_score;
-        //if neighbor not in openset
-        if(openSet.find(neighbor) == openSet.end())
+        //if neighbor not yet evaluated
+        if(neighbor->g_score == Node::DNE)
           //add neighbor to openset
-          openSet.insert(neighbor);
+          openSet.push(neighbor);
+        //came_from[neighbor] = current
+        neighbor->parent = current;
+        //g_score[neighbor] = tentative_g_score
+        neighbor->g_score= tempScore;
       }
     }
-
   }
-  //return empty
+
+  return reconstruct_path(sink);
+}
+
+vector<Node*> Navigation::reconstruct_path(Node* current)
+{
   vector<Node*> path;
+  while(current->parent != NULL)
+  {
+    path.insert(path.begin(), current);
+    current = current->parent;
+  }
   return path;
 }
+
+void Navigation::outputPath(const vector<Node*>& path)
+{
+  cout << endl << "start path" << endl;
+  for(size_t i=0; i<path.size(); ++i)
+  {
+    cout << "\t" << path[i]->name << endl;
+  }
+  cout << "end path\n" << endl;
+}
+
+void Navigation::outputAllNodes()
+{
+  for(size_t i=0; i<allNodes.size(); ++i)
+  {
+    cout << allNodes[i].name << " " << allNodes[i].neighbors.size() << endl;
+  }
+}
+
