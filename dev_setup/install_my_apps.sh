@@ -3,7 +3,7 @@
 echo "Install script starting..."
 function install_dev
 {
-  #apt-get update  # To get the latest package lists
+  #apt-get -y update  # To get the latest package lists
 
   ########## DEVELOPMENT TOOLS ##########
     #libgtest-dev: google test
@@ -11,7 +11,7 @@ function install_dev
     #valgrind: memory leak check
     #kcachegrind: program efficiency stuff 
   echo "Installing the essentials..."
-  apt-get install build-essential git libgtest-dev cmake openssh-server valgrind kcachegrind graphviz doxygen gcc-4.8 g++-4.8 
+  apt-get -y install build-essential git libgtest-dev cmake openssh-server valgrind kcachegrind graphviz doxygen gcc-4.8 g++-4.8 
   
   #Install Google Test framework library
   echo "Configuring Google Test libraries..."
@@ -23,7 +23,7 @@ function install_dev
   
   #Install libftdi library
   echo "Installing LibFTDI library..."
-  apt-get install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev libftdi-dev
+  apt-get -y install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev libftdi-dev
   
   #This might not be needed.
   #cd ~
@@ -43,7 +43,7 @@ function install_dev
 function install_libftdi {
   #Install libftdi library
   echo "Installing LibFTDI library..."
-  apt-get install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev libftdi-dev
+  apt-get -y install libusb-1.0-0-dev libconfuse-dev swig python-dev libboost-all-dev libftdi-dev
   
   cd ~
   mkdir libftdi
@@ -63,7 +63,7 @@ function install_libftdi {
 function install_kinect_stuff {
   #Install libftdi library
   echo "Installing Kinect Utilities library..."
-  apt-get install gstreamer1.0
+  apt-get -y install gstreamer1.0
   
 
   echo "Kinect Utilities install complete."
@@ -73,11 +73,11 @@ function install_kinect_stuff {
 function install_qt_dep {
   #QT X11 Dependencies.
   echo "Installing qt dependencies..."
-  apt-get install libfontconfig1-dev libfreetype6-dev libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev libxi-dev libxrandr-dev libxrender-dev xterm -y
-  apt-get install libXcomposite-dev libxslt-dev libgstreamer-plugins-base0.10-0 -y
+  apt-get -y install libfontconfig1-dev libfreetype6-dev libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev libxi-dev libxrandr-dev libxrender-dev xterm
+  apt-get -y install libXcomposite-dev libxslt-dev libgstreamer-plugins-base0.10-0
 
   #Might also need: (:i386 installs 32bit only, I think)
-  #apt-get install libgl-mesa:i386 libgl-mesa ia32-libs ia32-libs:i386 lib32z1 lib32ncurses5 lib32z2-1.0  
+  #apt-get -y install libgl-mesa:i386 libgl-mesa ia32-libs ia32-libs:i386 lib32z1 lib32ncurses5 lib32z2-1.0  
 }
 
 function download_qt {
@@ -103,7 +103,7 @@ function install_WiringPi {
 
 function samba_add {
   echo "Installing SAMBA..."
-  apt-get install samba
+  apt-get -y install samba
    echo "Creating SAMBA user..."
    (echo "$pass"; echo "$pass") | smbpasswd -s -a $user
     #Edit smb.conf to add share.
@@ -123,18 +123,20 @@ function install_tools {
   ########## USEFUL THINGS ##########
   #xsysinfo: system resource view.
   echo "Installing useful tools..."
-  apt-get install xsysinfo dos2unix xfe
+  apt-get -y install xsysinfo dos2unix xfe
 }
-user=paul
-pass=safe
+user=pi
+pass=pi
 #install_dev
 #install_libftdi
-#samba_add
+#install_kinect_stuff
 #install_qt_dep
+#download_qt
 #install_WiringPi
+samba_add
 #install_tools
 
 
-#apt-get install <package name> -y
+#apt-get -y install <package name> -y
 #etc.
 echo "Install script completed."
