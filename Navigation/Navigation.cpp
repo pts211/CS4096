@@ -58,13 +58,12 @@ Node* Navigation::minCostNode(set<Node*>& openSet, map<Node*, int>& f_cost)
 
 void Navigation::NavigateToNode(Node* source, Node* sink)
 {
-  sinkIsNeighbor = false;
-  //cout << "buildPath" << endl;
+  //cout << "NavigateToNode" << endl;
   //The set of nodes already evaluated.
   set<Node*> closedSet;
-  //The set of tentative Nodes that need to be evaluated, starting with source
+  //The set of tentative Nodes that need to be evaluated, starting with sink (searching backwards)
   set<Node*> openSet;
-  openSet.insert(source);
+  openSet.insert(sink);
   //The map of navigated nodes.
   map<Node*, Node*> cameFrom;
   //Cost from start along best known path.
