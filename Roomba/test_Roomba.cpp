@@ -102,8 +102,10 @@ TEST(RoombaTest, Sensors_Packet_ALL)
   cout<<"Ready?"<<endl;
   cin.ignore();
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   delay(1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   delay(1000);
   r.powerOff();
   /********** TEST **********/
@@ -164,13 +166,16 @@ TEST(RoombaTest, Drive_BWD)
   
   //r.drive(200, 1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   delay(1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   r.drive(-200, 32768);
   delay(1000);
   r.drive(0, 0);
   delay(50);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   
   r.powerOff();
   /********** TEST **********/
@@ -195,13 +200,16 @@ TEST(RoombaTest, Drive_FWD)
   
   //r.drive(200, 1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   delay(1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   r.drive(200, 32768);
   delay(1000);
   r.drive(0, 0);
   delay(50);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   
   r.powerOff();
   /********** TEST **********/
@@ -226,13 +234,16 @@ TEST(RoombaTest, Drive_CW)
   
   //r.drive(200, 1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   delay(1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   r.drive(500, -1);
   delay(1000);
   r.drive(0, 0);
   delay(50);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   
   r.powerOff();
   /********** TEST **********/
@@ -257,13 +268,16 @@ TEST(RoombaTest, Drive_CCW)
   
   //r.drive(200, 1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   delay(1000);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   r.drive(500, 1);
   delay(1000);
   r.drive(0, 0);
   delay(50);
   r.getSensors(Sensor::ALL);
+  r.getSensor().print();
   
   r.powerOff();
   /********** TEST **********/

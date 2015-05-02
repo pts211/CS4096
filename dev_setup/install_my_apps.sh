@@ -60,6 +60,16 @@ function install_libftdi {
 
 }
 
+function install_kinect_stuff {
+  #Install libftdi library
+  echo "Installing Kinect Utilities library..."
+  apt-get install gstreamer1.0
+  
+
+  echo "Kinect Utilities install complete."
+
+}
+
 function install_qt_dep {
   #QT X11 Dependencies.
   echo "Installing qt dependencies..."

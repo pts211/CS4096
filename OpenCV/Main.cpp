@@ -1,14 +1,17 @@
+// #include <opencv2/core/core.hpp>
+// #include "opencv2/highgui/highgui.hpp"
+#include <cv.h>
+#include <highgui.h>
 #include <opencv2/core/core.hpp>
-#include "opencv2/highgui/highgui.hpp"
-#include <opencv\cv.h>
-#include <opencv\highgui.h>
+// #include <opencv\cv.h>
+// #include <opencv\highgui.h>
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>       /* time */
+// #include <time.h>       /* time */
 #include <string>
 #include <math.h>
-#include <Windows.h>
+// #include <Windows.h>
 
 
 
@@ -69,7 +72,7 @@ int main()
 	int plot_length, plot_length2;
 
 	createTrackbars();
-	Sleep(100);
+	//Sleep(100);
 
 	while(1)
 	{
@@ -77,7 +80,7 @@ int main()
         if (!bSuccess) //if not success, break loop
         {
              cout << "Cannot read a frame from video stream" << endl;
-			 Sleep(1000);
+			 //Sleep(1000);
              break;
         }
 
