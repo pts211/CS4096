@@ -160,7 +160,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
   }
 }
 
-bool Navigation::walkPath(vector<Node*>& path)
+bool Navigation::walkPath(vector<Node*> path)
 {
   //walk the walk using roomba commands
   if(path.empty())
