@@ -121,18 +121,18 @@ void Navigation::rotate(int degrees) {
   int16_t speed = 250;
   int16_t direction = -1;
 
-  sensor.getAngle();
+  roomba.getSensors(Sensor::ALL).getAngle();
     if(degrees < 0) {
         roomba.drive(speed, direction);
         while((degreesRotated > degrees - 5) || (degreesRotated < degrees + 5)) {
             usleep(10);
-            degreesRotated -= sensor.getAngle();
+            degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
         }    
     } else {
         roomba.drive(250, 1);
         while((degreesRotated < degrees - 5) || (degreesRotated > degrees + 5)) {
             usleep(10);
-            degreesRotated += sensor.getAngle();
+            degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
         }
     }
     roomba.drive(0, 0);    
@@ -232,7 +232,7 @@ bool Navigation::walkPath(vector<Node*> path)
       }
         else if(!cam->getfloorsign().empty())
         {
-        if(cam->getfloorsign() == path[path.size()-1]->name) {
+          if(cam->getfloorsign() == path[path.size()-1]->name) {
           arrived = true;
         } else {
           turnAtIntersection(path, i);
