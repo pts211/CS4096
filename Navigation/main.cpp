@@ -1,3 +1,6 @@
+#include "../OpenCV/camera.h"
+#include "../Roomba/Roomba.h"
+
 #include "Navigation.h"
 #include <iostream>
 #include <assert.h>

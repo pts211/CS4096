@@ -365,15 +365,14 @@ void camera::output()
     imshow("Edges", edges);
     
     namedWindow("Color",CV_WINDOW_OPENGL);
-    imshow("Color",img);
+    imshow("Color",img); 
+    
    
-   
-   
-  	/*if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+  	if (waitKey(1) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
   	{
   		cout << "esc key is pressed by user" << endl;
       exit(1);
-  	}*/
+  	}
   
   	cout << "[ " << pathisblocked << ", " << floorsign << ", " << e_slope << ", " << c_slope << " ]" << endl;
   
