@@ -64,21 +64,11 @@ void Navigation::inputNodes(const char* filename)
 
 bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
 {
-  vector<Node*> path;
-  //while not yet there...
-  bool arrived = false;
-
-  while(!arrived)
-  {
-    //path from CURRENT place to sink Node                                                  FIX THIS
-    path = findPath(source, sink); //should be (current, sink) with current starting at source
-    #ifdef DEBUG 
-    outputPath(path); 
-    #endif
-    arrived = walkPath(path);
-  }
-
-  return true; //or false if ???
+  vector<Node*> path = findPath(source, sink); //should be (current, sink) with current starting at source
+  #ifdef DEBUG 
+  outputPath(path); 
+  #endif
+  return walkPath(path);
 }
 
 Node* Navigation::getNode(int index)
@@ -181,7 +171,6 @@ bool Navigation::walkPath(const vector<Node*>& path)
   	}
   }
 
-  //if blocked, restart pathfinding from current spot.
   return true;
 }
 
