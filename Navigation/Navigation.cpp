@@ -156,7 +156,7 @@ Node* Navigation::walkToStartingNode()
 
 void Navigation::moveForwardUntilSignOrBlockage()
 {
-  roomba.drive(500, 0); //                              is drive temporary or constant until you drive(0, 0)???????
+  roomba.drive(250, 0); //                              is drive temporary or constant until you drive(0, 0)???????
   while(cam->getfloorsign().empty() && !cam->getpathisblocked())
   {
     cam->update(80, 80, 80, 80);
@@ -173,7 +173,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
         cam->update(80, 80, 80, 80);
       }
     }
-    roomba.drive(500,0);
+    roomba.drive(250,0);
   }
   if(!cam->getfloorsign().empty())
   {

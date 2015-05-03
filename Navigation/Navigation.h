@@ -1,5 +1,5 @@
-#ifndef NODE_H
-#define NODE_H
+#ifndef NAVIGATION_H
+#define NAVIGATION_H
 
 #include "../OpenCV/camera.h"
 #include "../Roomba/Roomba.h"
