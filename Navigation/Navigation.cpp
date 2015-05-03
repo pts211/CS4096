@@ -127,6 +127,18 @@ void Navigation::moveForwardUntilSignOrBlockage()
   while(cam.getfloorsign().empty() && !cam.getpathisblocked())
   {
     cam.update();
+    if(cam.getc_slope() > 5) { //arbitrary tolerances. slope will be 0 if we are going straight    	
+    	while(cam.getc_slope() > 2) {
+    		roomba.drive(250, 10); //arbitrary radius, change later
+    		cam.update();
+    	}
+    } else if(cam.getc_slope() < -5) {
+    	while(cam.getc_slope() < -2) {
+    		roomba.drive(250, -10);
+    		cam.update();
+    	}
+    }
+    roomba.drive(500,0);
   }
   if(!cam.getfloorsign().empty())
   {
@@ -150,28 +162,31 @@ bool Navigation::walkPath(const vector<Node*>& path)
     {
   		moveForwardUntilSignOrBlockage();
   		if(cam.getpathisblocked())
-      {
-        cout << "Path is blocked. Turning around." << endl;
-  			roomba.drive(0, 180); //turn around
+        {
+          cout << "Path is blocked. Turning around." << endl;
+  		  roomba.drive(0, 180); //turn around
   			//move towards last intersection
-        moveForwardUntilSignOrBlockage();                //ASSUMING NO BLOCKAGE HERE
+          moveForwardUntilSignOrBlockage();                //ASSUMING NO BLOCKAGE HERE
 
         //update weights where blockage exists
-        incrementWeight(path[i-1], path[i]);
+          incrementWeight(path[i-1], path[i]);
 
-  			path = findPath(path[i-1], path[path.size()-1]);
-        return walkPath(path);
+  		  path = findPath(path[i-1], path[path.size()-1]);
+          return walkPath(path);
   		}
-      else if(!cam.getfloorsign().empty())
-      {
-  			arrived = true;
-  			//check what direction we need to go
-  			//turn
+      	else if(!cam.getfloorsign().empty())
+        {
+  			if(cam.getfloorsign() == path[path.size()-1]->name) {
+  				arrived = true;
+  			} else {
+  				//check what direction we need to go
+  				//turn
+  			}
   		}
   	}
   }
 
-  return true;
+  return arrived;
 }
 
 vector<Node*> Navigation::findPath(Node* source, Node* sink)
