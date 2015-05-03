@@ -64,7 +64,7 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 
 	img = input.clone();
 
-	/*
+	
 	for(int x=0; x<dWidth; x++)
 	{
 		for(int y=0; y<dHeight; y++)
@@ -81,7 +81,7 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 
 		}
 	}
-	*/
+	
 
 
 
@@ -357,8 +357,17 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 void camera::output()
 {
     
-  	namedWindow("MyVideo",CV_WINDOW_OPENGL); //create a window called "MyVideo"
-  	imshow("MyVideo", input); //show the frame in "MyVideo" window
+  	namedWindow("Input",CV_WINDOW_OPENGL); //create a window called "MyVideo"
+  	imshow("Input", input); //show the frame in "MyVideo" window
+   
+    namedWindow("Edges",CV_WINDOW_OPENGL);
+    imshow("Edges", edges);
+    
+    namedWindow("Color",CV_WINDOW_OPENGL);
+    imshow("Color",img);
+   
+   
+   
   	/*if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
   	{
   		cout << "esc key is pressed by user" << endl;
