@@ -5,20 +5,20 @@ node2
 node3
 node4
 2
-1,10:3,15
+1 10 3 15
 2
-0,10:2,10
+0 10 2 10
 3
-1,10:3,5:4,7
+1 10 3 5 4 7
 3
-0,15:2,5:4,12
+0 15 2 5 4 12
 2
-3,12:2,7
+3 12 2 7
 
 //FORMAT
 Number of nodes
 Names of nodes
-Number of neighbors
-Neighbor,Weight:Neighbor,Weight:Neighbor,Weight....
+Number of neighbors 
+NeighborIndex Weight NeighborIndex Weight NeighborIndex Weight....
 
-//you forgot that index starts at 0
+//index starts at 0

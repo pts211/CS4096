@@ -15,15 +15,8 @@ node4
 2
 2 20 4 3 5 4
 
-//FORMAT
+//FORMAT: index starts at 0
 Number of nodes
 Names of nodes
-<<<<<<< Updated upstream
-Number of neighbors 
-NeighborIndex Weight NeighborIndex Weight NeighborIndex Weight....
-
-//index starts at 0
-=======
 Number of neighbors
 Neighbor Weight Direction Neighbor Weight Direction...
->>>>>>> Stashed changes

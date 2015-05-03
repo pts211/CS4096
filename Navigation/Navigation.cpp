@@ -80,7 +80,6 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   return true; //or false if ???
 }
 
-<<<<<<< Updated upstream
 Node* Navigation::getNode(int index)
 {
   return &allNodes[index];
@@ -110,8 +109,10 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
   #endif
 
   return path;
-=======
-Node Navigation::walkToStartingNode() {
+}
+
+/*Node Navigation::walkToStartingNode()
+{
 
 	//if(OR::atNode()) {
 		//return OR::currentNode();
@@ -127,8 +128,7 @@ Node Navigation::walkToStartingNode() {
 	//}
 
 	//return OR::currentNode();
->>>>>>> Stashed changes
-}
+}*/
 
 bool Navigation::walkPath(const vector<Node*>& path)
 {
