@@ -1,7 +1,7 @@
 using namespace std;
 using namespace cv;
 
-void camera::update()
+void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 {
 
 	pathisblocked = false; //NO IMPLEMENTATION YET

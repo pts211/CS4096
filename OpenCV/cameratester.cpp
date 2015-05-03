@@ -23,7 +23,7 @@ int main()
  
 	while(1)
 	{
-		cam.update();
+		cam.update(EDGE_NUM,B_MIN,G_MAX,R_MAX);
 		cam.output();
 	}
 

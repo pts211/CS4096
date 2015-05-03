@@ -23,15 +23,6 @@ using namespace cv;
 
 
 
-int EDGE_NUM = 80;
-
-int B_MIN = 80;
-
-int G_MAX = 80;
-
-int R_MAX = 80;
-
-
 
 class camera
 {
@@ -56,7 +47,7 @@ public:
 
 	//MUTATOR
 
-	void update();
+	void update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX);
 
 	//ACCESSORS
  
