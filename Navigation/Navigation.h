@@ -51,10 +51,12 @@ private:
 	void outputPath(const vector<Node*>& path);
 	void outputAllNodes();
 	void turnAtIntersection(vector<Node*> path, int currentNode);
+	void rotate(int degrees);
 	vector<Node> allNodes;
 	int numNodes;
 	camera *cam;
 	Roomba roomba;
+	RoombaSensors sensor;
 };
 
 #endif
