@@ -139,16 +139,16 @@ void Navigation::moveForwardUntilSignOrBlockage()
   roomba.drive(500, 0); //                              is drive temporary or constant until you drive(0, 0)???????
   while(cam->getfloorsign().empty() && !cam->getpathisblocked())
   {
-    cam->update();
+    cam->update(80, 80, 80, 80);
     if(cam->getc_slope() > 5) { //arbitrary tolerances. slope will be 0 if we are going straight    	
     	while(cam->getc_slope() > 2) {
     		roomba.drive(250, 10); //arbitrary radius, change later
-    		cam->update();
+    		cam->update(80, 80, 80, 80);
     	}
     } else if(cam->getc_slope() < -5) {
     	while(cam->getc_slope() < -2) {
     		roomba.drive(250, -10);
-    		cam->update();
+    		cam->update(80, 80, 80, 80);
     	}
     }
     roomba.drive(500,0);
