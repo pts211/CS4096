@@ -358,13 +358,13 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 void camera::output()
 {
     
-  	namedWindow("Input",CV_WINDOW_OPENGL); //create a window called "MyVideo"
+  	namedWindow("Input",0); //create a window called "MyVideo"
   	imshow("Input", input); //show the frame in "MyVideo" window
    
-    namedWindow("Edges",CV_WINDOW_OPENGL);
+    namedWindow("Edges",0);
     imshow("Edges", edges);
     
-    namedWindow("Color",CV_WINDOW_OPENGL);
+    namedWindow("Color",0);
     imshow("Color",img); 
     
    

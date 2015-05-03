@@ -3,6 +3,7 @@
 
 #include "../OpenCV/camera.h"
 #include "../Roomba/Roomba.h"
+// #include "Roomba.h"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -56,7 +57,7 @@ private:
 	int numNodes;
 	camera *cam;
 	Roomba roomba;
-	RoombaSensors sensor;
+	// RoombaSensors sensor;
 };
 
 #endif

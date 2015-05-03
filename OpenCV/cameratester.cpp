@@ -40,17 +40,14 @@ int main()
 void on_trackbar( int, void* )
 {//This function gets called whenever a
 	// trackbar position is changed
- Mat blank;
- blank = Scalar(0);
- imshow(trackbarWindowName, blank);
 }
 
 void createTrackbars()
 {
 	//create window for trackbars
  
-	namedWindow(trackbarWindowName,CV_WINDOW_OPENGL);
-  setOpenGlContext(trackbarWindowName);
+	namedWindow(trackbarWindowName,0);
+
 	char TrackbarName[50];
 	
  
