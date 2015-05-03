@@ -121,7 +121,7 @@ void Navigation::rotate(int degrees) {
 
   sensor.getAngle();
     if(degrees < 0) {
-        roomba.drive(250, -1);
+        roomba.drive((int16_t)250, (int16_t)-1);
         while((degreesRotated > degrees - 5) || (degreesRotated < degrees + 5)) {
             usleep(10);
             degreesRotated -= sensor.getAngle();
