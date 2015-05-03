@@ -5,20 +5,25 @@ node2
 node3
 node4
 2
-1 10 3 25
+1 10 1 3 25 3
 2
-0 10 2 5
+0 10 2 2 5 3
 3
-1 5 3 5 4 20
+1 5 4 3 5 2 4 20 3
 3
-0 25 2 5 4 5
+0 25 4 2 5 1 4 5 3
 2
-2 20 3 5
+2 20 4 3 5 4
 
 //FORMAT
 Number of nodes
 Names of nodes
+<<<<<<< Updated upstream
 Number of neighbors 
 NeighborIndex Weight NeighborIndex Weight NeighborIndex Weight....
 
 //index starts at 0
+=======
+Number of neighbors
+Neighbor Weight Direction Neighbor Weight Direction...
+>>>>>>> Stashed changes

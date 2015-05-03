@@ -41,38 +41,50 @@ void testInputNodes(const char* file)
 	defaultNav.inputNodes(file);
 
 	assert(defaultNav.getNode(0)->name=="node0");
-	assert(defaultNav.getNode(0)->neighbors[0]->name=="node1");
-	assert(defaultNav.getNode(0)->neighbors[1]->name=="node3");
-	assert(defaultNav.getNode(0)->weights[0]==10);
-	assert(defaultNav.getNode(0)->weights[1]==25);
+	assert(defaultNav.getNode(0)->neighbors[0] == defaultNav.getNode(1));
+	assert(defaultNav.getNode(0)->neighbors[1] == defaultNav.getNode(3));
+	assert(defaultNav.getNode(0)->weights[0] == 10);
+	assert(defaultNav.getNode(0)->weights[1] == 25);
+	assert(defaultNav.getNode(0)->directions[0] == 1);
+	assert(defaultNav.getNode(0)->directions[1] == 3);
 
 	assert(defaultNav.getNode(1)->name=="node1");
-	assert(defaultNav.getNode(1)->neighbors[0]->name=="node0");
-	assert(defaultNav.getNode(1)->neighbors[1]->name=="node2");
+	assert(defaultNav.getNode(1)->neighbors[0] == defaultNav.getNode(0));
+	assert(defaultNav.getNode(1)->neighbors[1] == defaultNav.getNode(2));
 	assert(defaultNav.getNode(1)->weights[0]==10);
 	assert(defaultNav.getNode(1)->weights[1]==5);
+	assert(defaultNav.getNode(1)->directions[0] == 2);
+	assert(defaultNav.getNode(1)->directions[1] == 3);
 
 	assert(defaultNav.getNode(2)->name=="node2");
-	assert(defaultNav.getNode(2)->neighbors[0]->name=="node1");
-	assert(defaultNav.getNode(2)->neighbors[1]->name=="node3");
-	assert(defaultNav.getNode(2)->neighbors[2]->name=="node4");
+	assert(defaultNav.getNode(2)->neighbors[0] == defaultNav.getNode(1));
+	assert(defaultNav.getNode(2)->neighbors[1] == defaultNav.getNode(3));
+	assert(defaultNav.getNode(2)->neighbors[2] == defaultNav.getNode(4));
 	assert(defaultNav.getNode(2)->weights[0]==5);
 	assert(defaultNav.getNode(2)->weights[1]==5);
 	assert(defaultNav.getNode(2)->weights[2]==20);
+	assert(defaultNav.getNode(2)->directions[0] == 4);
+	assert(defaultNav.getNode(2)->directions[1] == 2);
+	assert(defaultNav.getNode(2)->directions[2] == 3);
 
 	assert(defaultNav.getNode(3)->name=="node3");
-	assert(defaultNav.getNode(3)->neighbors[0]->name=="node0");
-	assert(defaultNav.getNode(3)->neighbors[1]->name=="node2");
-	assert(defaultNav.getNode(3)->neighbors[2]->name=="node4");
+	assert(defaultNav.getNode(3)->neighbors[0] == defaultNav.getNode(0));
+	assert(defaultNav.getNode(3)->neighbors[1] == defaultNav.getNode(2));
+	assert(defaultNav.getNode(3)->neighbors[2] == defaultNav.getNode(4));
 	assert(defaultNav.getNode(3)->weights[0]==25);
 	assert(defaultNav.getNode(3)->weights[1]==5);
 	assert(defaultNav.getNode(3)->weights[2]==5);
+	assert(defaultNav.getNode(3)->directions[0] == 4);
+	assert(defaultNav.getNode(3)->directions[1] == 1);
+	assert(defaultNav.getNode(3)->directions[2] == 3);
 
 	assert(defaultNav.getNode(4)->name=="node4");
-	assert(defaultNav.getNode(4)->neighbors[0]->name=="node2");
-	assert(defaultNav.getNode(4)->neighbors[1]->name=="node3");
+	assert(defaultNav.getNode(4)->neighbors[0] == defaultNav.getNode(2));
+	assert(defaultNav.getNode(4)->neighbors[1] == defaultNav.getNode(3));
 	assert(defaultNav.getNode(4)->weights[0]==20);
 	assert(defaultNav.getNode(4)->weights[1]==5);
+	assert(defaultNav.getNode(4)->directions[0] == 4);
+	assert(defaultNav.getNode(4)->directions[1] == 4);
 }
 
 void testReconstructPath(const char* file)
@@ -118,7 +130,6 @@ void testTravelFromSourceToSink(const char* file)
 	bool arrived;
 
 	defaultNav.inputNodes(file);
-
 	arrived = defaultNav.travelFromSourceToSink(defaultNav.getNode(0), defaultNav.getNode(4));
 
 	assert(arrived);

@@ -8,15 +8,20 @@
 #include <utility>
 using namespace std;
 
+// enum CardinalDirections {NORTH, SOUTH, EAST, WEST};
+
 struct Node
 {
+
 	Node(string name, int g): name(name), g_score(g) {} //, f_score(f) {}
 	string name;
 	double g_score; //cost from source
 	//double f_score; //g_score + weights[sink] a.k.a. full cost from source to sink when going through this node
 	Node* parent;
+	// vector<std::tuple<Node*, int, Direction>> info;	
 	vector<Node*> neighbors;
 	vector<double> weights;
+	vector<int> directions;
 	static double DNE;
 };
 
@@ -37,6 +42,7 @@ public:
 
 private:
 	bool walkPath(const vector<Node*>& path);
+	Node walkToStartingNode();
 	vector<Node*> findPath(Node* source, Node* sink);
 	vector<Node*> reconstructPath(Node* current);
 	void outputPath(const vector<Node*>& path);

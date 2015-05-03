@@ -25,16 +25,17 @@ void Navigation::inputNodes(const char* filename)
 	ifstream in;
 	string inStr;
 	int numNeighbors;
+	int neighbor;
+	int weight;
+	int direction;
 
 	in.open(filename);
 
 	if(in.good()){ //if the file was successfully opened
 		in >> inStr; //read the number of nodes
 		numNodes = atoi(inStr.c_str()); //change the string we read to an int
-		// cout << "num nodes: " << numNodes << endl;
 		for(int i = 0; i < numNodes; i++){ //loop for each node we have
 			in >> inStr; //read the name of a node
-      		// cout << "Name: " << inStr << endl;
 			Node n(inStr, Node::DNE); //create a new node with nonexistant g value
       		n.parent = NULL;
 			allNodes.push_back(n); //put that node in the list of all nodes
@@ -43,14 +44,18 @@ void Navigation::inputNodes(const char* filename)
 		for(int i = 0; i < numNodes; i++){ //loop for each node we have
 			in >> inStr; //read the number of neighbors a node has
 			numNeighbors = atoi(inStr.c_str());
-      		// cout << "numNeighbors :: " << numNeighbors << endl; //output is wrong here      		
 			for(int j = 0; j < numNeighbors; j++) { //loop for each neighbor of a node
-				in >> inStr; //read the nodes neighbor
-				// cout << "Neighbor: " << inStr << endl;
-				allNodes[i].neighbors.push_back(&allNodes[atoi(inStr.c_str())]); //store the node in the list of neighbors
-				in >> inStr; //read the neighbors weight
-				// cout << "Weight: " << inStr << endl;
-				allNodes[i].weights.push_back(atoi(inStr.c_str())); //assign the weight
+				in >> inStr;
+				neighbor = atoi(inStr.c_str()); //read the nodes neighbor
+				in >> inStr;
+				weight = atoi(inStr.c_str());
+				in >> inStr;
+				direction = atoi(inStr.c_str());
+				// allNodes[i].info[j] = make_tuple(&allNodes[neighbor], weight, direction);
+				allNodes[i].neighbors.push_back(&allNodes[neighbor]); //store the node in the list of neighbors
+				// in >> inStr; //read the neighbors weight
+				allNodes[i].weights.push_back(weight); //assign the weight
+				allNodes[i].directions.push_back(direction); //assign the direction we need to go in to reach the neighbor
 			}
 		}
 	}
@@ -61,11 +66,12 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   vector<Node*> path;
   //while not yet there...
   bool arrived = false;
+
   while(!arrived)
   {
     //path from CURRENT place to sink Node                                                  FIX THIS
     path = findPath(source, sink); //should be (current, sink) with current starting at source
-    #ifndef TEST 
+    #ifdef DEBUG 
     outputPath(path); 
     #endif
     arrived = walkPath(path);
@@ -74,6 +80,7 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   return true; //or false if ???
 }
 
+<<<<<<< Updated upstream
 Node* Navigation::getNode(int index)
 {
   return &allNodes[index];
@@ -103,11 +110,44 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
   #endif
 
   return path;
+=======
+Node Navigation::walkToStartingNode() {
+
+	//if(OR::atNode()) {
+		//return OR::currentNode();
+	//}
+
+	//While(!OR::atNode()) {
+		//if(OR::straight()) {
+			//Roomba::drive(Warp 5, 0);
+		//} else {
+			//degrees = OR::somethingWithSlopes?()
+			//Roomba::drive(0, degrees)
+		//}
+	//}
+
+	//return OR::currentNode();
+>>>>>>> Stashed changes
 }
 
 bool Navigation::walkPath(const vector<Node*>& path)
 {
   //walk the walk using roomba commands
+	// while(!arrived) {
+	// 	OR::update()
+	// 	if(OR::getpathisblocked()) {
+			//update weights
+			//Roomba::drive(0, 180)
+			//go back to last interstection
+			//run findPath
+			//Roomba::drive(fast, )
+		// } else if(OR::getfloorsign()!="") {
+			//move until we're in the intersection
+			//check what direction we need to go
+			//turn & drive
+		// }
+	// }
+  
 
   //if blocked, restart pathfinding from current spot.
   return true;
