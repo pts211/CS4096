@@ -7,14 +7,14 @@ using namespace std;
 void createTrackbars();
 
 const string trackbarWindowName = "Trackbars";
-int *EDGE_NUM = 50;
-
+int* EDGE_NUM = 50;
 int EDGE_NUM_MAX = 255;
-int B_MIN = 40;
+
+int* B_MIN = 40;
 const int B_LIM = 255;
-int G_MAX = 80;
+int* G_MAX = 80;
 const int G_LIM = 255;
-int R_MAX = 80;
+int* R_MAX = 80;
 const int R_LIM = 255;
 
 int main()
