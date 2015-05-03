@@ -17,7 +17,8 @@ Navigation::Navigation(const char* filename)
   if(allNodes.size() > 1) //keep in mind, the output path doesn't include the source
   {
     cout << "from " << allNodes[0].name << " to " << allNodes[allNodes.size()-1].name << endl;
-    travelFromSourceToSink(&allNodes[0], &allNodes[allNodes.size()-1]); 
+    // travelFromSourceToSink(&allNodes[0], &allNodes[allNodes.size()-1]); 
+    travelFromSourceToSink(walkToStartingNode(), &allNodes[allNodes.size()-1]);
   }
 }
 
@@ -56,7 +57,20 @@ void Navigation::inputNodes(const char* filename)
 				allNodes[i].neighbors.push_back(&allNodes[neighbor]); //store the node in the list of neighbors
 				// in >> inStr; //read the neighbors weight
 				allNodes[i].weights.push_back(weight); //assign the weight
-				allNodes[i].allDirections.push_back(direction); //assign the direction we need to go in to reach the neighbor
+				switch(direction) { //assign the direction we need to go in to reach the neighbor
+					case 1:
+						allNodes[i].allDirections.push_back(NORTH);
+						break;
+					case 2:
+						allNodes[i].allDirections.push_back(SOUTH);
+						break;
+					case 3:
+						allNodes[i].allDirections.push_back(EAST);
+						break;
+					case 4:
+						allNodes[i].allDirections.push_back(WEST);
+						break;
+				}				 
 			}
 		}
 	}
@@ -102,24 +116,23 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
   return path;
 }
 
-/*Node Navigation::walkToStartingNode()
+Node* Navigation::walkToStartingNode()
 {
+	while(1) {
+		moveForwardUntilSignOrBlockage();
+		if(!cam.getfloorsign().empty()) {
+			for(int i = 0; i < allNodes.size() - 1; i++) {
+				if(cam.getfloorsign() == allNodes[i]->name) {
+					return allNodes[i];
+				}
+			}
+		}
 
-	//if(OR::atNode()) {
-		//return OR::currentNode();
-	//}
-
-	//While(!OR::atNode()) {
-		//if(OR::straight()) {
-			//Roomba::drive(Warp 5, 0);
-		//} else {
-			//degrees = OR::somethingWithSlopes?()
-			//Roomba::drive(0, degrees)
-		//}
-	//}
-
-	//return OR::currentNode();
-}*/
+		if(cam.getpathisblocked()) {
+			roomba.drive(0,180);
+		}	
+	}
+}
 
 void Navigation::moveForwardUntilSignOrBlockage()
 {
@@ -164,12 +177,28 @@ bool Navigation::walkPath(const vector<Node*>& path)
   		if(cam.getpathisblocked())
         {
           cout << "Path is blocked. Turning around." << endl;
-  		  roomba.drive(0, 180); //turn around
+  		  roomba.drive(0, 180); //turn around  		  
   			//move towards last intersection
           moveForwardUntilSignOrBlockage();                //ASSUMING NO BLOCKAGE HERE
 
         //update weights where blockage exists
           incrementWeight(path[i-1], path[i]);
+
+          //we turned around, so switch direction we traveled
+          switch(path[i]->directionTraveled) {
+          	case NORTH:
+          		path[i-1]->directionTraveled = SOUTH;
+          		break;
+          	case SOUTH:
+          		path[i-1]->directionTraveled = NORTH;
+          		break;
+          	case EAST:
+          		path[i-1]->directionTraveled = WEST;
+          		break;
+          	case WEST:
+          		path[i-1]->directionTraveled = EAST;
+          		break;
+          }
 
   		  path = findPath(path[i-1], path[path.size()-1]);
   		  turnAtIntersection(path, 0);
@@ -192,66 +221,66 @@ bool Navigation::walkPath(const vector<Node*>& path)
 void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
 
 	switch(path[currentNode]->directionTraveled) {
-		case 1:			
+		case NORTH:			
 			switch(path[currentNode+1]->directionTraveled) {
-				case 1:
+				case NORTH:
 					roomba::drive(0, 0);
 					break;
-				case 2:
+				case SOUTH:
 					roomba::drive(0, 180);
 					break;
-				case 3:
+				case EAST:
 					roomba::drive(0, -90);
 					break;
-				case 4:
+				case WEST:
 					roomba::drive(0, 90);
 					break;
 			}
 			break;
-		case 2:
+		case SOUTH:
 			switch(path[currentNode+1]->directionTraveled) {
-				case 1:
+				case NORTH:
 					roomba::drive(0, 180);
 					break;
-				case 2:
+				case SOUTH:
 					roomba::drive(0, 0);
 					break;
-				case 3:
+				case EAST:
 					roomba::drive(0, 90);
 					break;
-				case 4:
+				case WEST:
 					roomba::drive(0, -90);
 					break;
 			}
 			break;
-		case 3:
+		case EAST:
 			switch(path[currentNode+1]->directionTraveled) {
-				case 1:
+				case NORTH:
 					roomba::drive(0, 90);
 					break;
-				case 2:
+				case SOUTH:
 					roomba::drive(0, -90);
 					break;
-				case 3:
+				case EAST:
 					roomba::drive(0, 0);
 					break;
-				case 4:
+				case WEST:
 					roomba::drive(0, 180);
 					break;
 			}
 			break;
-		case 4:
+		case WEST:
 			switch(path[currentNode+1]->directionTraveled) {
-				case 1:
+				case NORTH:
 					roomba::drive(0, -90);
 					break;
-				case 2:
+				case SOUTH:
 					roomba::drive(0, 90);
 					break;
-				case 3:
+				case EAST:
 					roomba::drive(0, 180);
 					break;
-				case 4:
+				case WEST:
 					roomba::drive(0, 0);
 					break;
 			}

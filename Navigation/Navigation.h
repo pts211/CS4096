@@ -10,7 +10,7 @@
 #include <utility>
 using namespace std;
 
-// enum CardinalDirections {NORTH, SOUTH, EAST, WEST};
+enum CardinalDirections {NORTH, SOUTH, EAST, WEST};
 
 struct Node
 {
@@ -22,8 +22,8 @@ struct Node
 	// vector<std::tuple<Node*, int, Direction>> info;	
 	vector<Node*> neighbors;
 	vector<double> weights;
-	vector<int> allDirections;
-	int directionTraveled;
+	vector<CardinalDirections> allDirections;
+	CardinalDirections directionTraveled;
 	static double DNE;
 	static double LARGE_NUM;
 };
