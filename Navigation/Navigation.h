@@ -1,5 +1,5 @@
-#ifndef NODE_H
-#define NODE_H
+#ifndef NAVIGATION_H
+#define NAVIGATION_H
 
 #include "../OpenCV/camera.h"
 #include "../Roomba/Roomba.h"
@@ -44,17 +44,19 @@ public:
 
 private:
 	void moveForwardUntilSignOrBlockage();
-	bool walkPath(const vector<Node*>& path);	
+	bool walkPath(vector<Node*> path);
 	vector<Node*> findPath(Node* source, Node* sink);
 	vector<Node*> reconstructPath(Node* current, Node* sink);
 	void incrementWeight(Node* n1, Node* n2);
 	void outputPath(const vector<Node*>& path);
 	void outputAllNodes();
 	void turnAtIntersection(vector<Node*> path, int currentNode);
+	void rotate(int degrees);
 	vector<Node> allNodes;
 	int numNodes;
 	camera *cam;
 	Roomba roomba;
+	RoombaSensors sensor;
 };
 
 #endif
