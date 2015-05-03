@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string>
 #include <math.h>
+#include <unistd.h>
 
 using namespace std;
 using namespace cv;

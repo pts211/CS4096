@@ -24,7 +24,7 @@ CXX = /usr/bin/g++-4.8
 #CXXFLAGS = -std=c++11 -I.. -Wextra -pthread -lftdi -g -Wall -W
 #To run with the gtest framework, use the below CXXFLAGS.
 CXXFLAGS = -std=c++11 -I.. -Wextra -pthread -lgtest -lftdi -g -Wall -W -w
-LIBS = `pkg-config --libs opencv --cflags opencv`
+LIBS = `pkg-config --libs opencv` `pkg-config --cflags opencv`
 #-pedantic-errors 
 
 # The following 2 lines only work with gnu make.
@@ -49,11 +49,11 @@ default: driver
 
 %.o: %.cpp
 	@echo "Compiling $<"
-	@$(CXX) $(CXXFLAGS) $(LIBS) -c $< -o $@
+	@$(CXX) $(CXXFLAGS) -c $< -o $@ $(LIBS)
 
 driver: $(OBJECTS)
 	@echo "Building $@"
-	@$(CXX) $(OBJECTS) $(CXXFLAGS) -o $@
+	@$(CXX) $(OBJECTS) $(CXXFLAGS) -o $@ $(LIBS)
 	@echo ""
 	@echo "Everything worked :-) "
 	@echo ""
