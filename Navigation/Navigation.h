@@ -44,11 +44,8 @@ public:
 
 private:
 	void moveForwardUntilSignOrBlockage();
-<<<<<<< Updated upstream
 	bool walkPath(vector<Node*> path);	
-=======
 	bool walkPath(vector<Node*>& path);	
->>>>>>> Stashed changes
 	vector<Node*> findPath(Node* source, Node* sink);
 	vector<Node*> reconstructPath(Node* current, Node* sink);
 	void incrementWeight(Node* n1, Node* n2);
