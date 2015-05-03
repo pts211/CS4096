@@ -113,7 +113,6 @@ bool Navigation::walkPath(const vector<Node*>& path)
   return true;
 }
 
-//this is now BFS not A*... because we don't know a heuristic and it don't matter ("doesn't matter", you sound like a hick) anyway (small graphs)
 vector<Node*> Navigation::findPath(Node* source, Node* sink)
 {
   //cout << "findPath" << endl;
