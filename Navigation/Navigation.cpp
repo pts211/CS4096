@@ -120,15 +120,15 @@ Node* Navigation::walkToStartingNode()
 {
 	while(1) {
 		moveForwardUntilSignOrBlockage();
-		if(!cam.getfloorsign().empty()) {
+		if(!cam->getfloorsign().empty()) {
 			for(int i = 0; i < allNodes.size() - 1; i++) {
-				if(cam.getfloorsign() == allNodes[i]->name) {
+				if(cam->getfloorsign() == allNodes[i]->name) {
 					return allNodes[i];
 				}
 			}
 		}
 
-		if(cam.getpathisblocked()) {
+		if(cam->getpathisblocked()) {
 			roomba.drive(0,180);
 		}	
 	}
@@ -137,23 +137,23 @@ Node* Navigation::walkToStartingNode()
 void Navigation::moveForwardUntilSignOrBlockage()
 {
   roomba.drive(500, 0); //                              is drive temporary or constant until you drive(0, 0)???????
-  while(cam.getfloorsign().empty() && !cam.getpathisblocked())
+  while(cam->getfloorsign().empty() && !cam->getpathisblocked())
   {
-    cam.update();
-    if(cam.getc_slope() > 5) { //arbitrary tolerances. slope will be 0 if we are going straight    	
-    	while(cam.getc_slope() > 2) {
+    cam->update();
+    if(cam->getc_slope() > 5) { //arbitrary tolerances. slope will be 0 if we are going straight    	
+    	while(cam->getc_slope() > 2) {
     		roomba.drive(250, 10); //arbitrary radius, change later
-    		cam.update();
+    		cam->update();
     	}
-    } else if(cam.getc_slope() < -5) {
-    	while(cam.getc_slope() < -2) {
+    } else if(cam->getc_slope() < -5) {
+    	while(cam->getc_slope() < -2) {
     		roomba.drive(250, -10);
-    		cam.update();
+    		cam->update();
     	}
     }
     roomba.drive(500,0);
   }
-  if(!cam.getfloorsign().empty())
+  if(!cam->getfloorsign().empty())
   {
     //move forward just a bit more so we're on top of it.
     drive(100, 0); //temp arbitrary numbers
@@ -174,7 +174,7 @@ bool Navigation::walkPath(const vector<Node*>& path)
   	while(!arrived) //is this loop actually doing anything? i.e. does it always only run once?
     {
   		moveForwardUntilSignOrBlockage();
-  		if(cam.getpathisblocked())
+  		if(cam->getpathisblocked())
         {
           cout << "Path is blocked. Turning around." << endl;
   		  roomba.drive(0, 180); //turn around  		  
@@ -204,9 +204,9 @@ bool Navigation::walkPath(const vector<Node*>& path)
   		  turnAtIntersection(path, 0);
           return walkPath(path);
   		}
-      	else if(!cam.getfloorsign().empty())
+      	else if(!cam->getfloorsign().empty())
         {
-  			if(cam.getfloorsign() == path[path.size()-1]->name) {
+  			if(cam->getfloorsign() == path[path.size()-1]->name) {
   				arrived = true;
   			} else {
   				turnAtIntersection(path, i);
@@ -224,64 +224,64 @@ void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
 		case NORTH:			
 			switch(path[currentNode+1]->directionTraveled) {
 				case NORTH:
-					roomba::drive(0, 0);
+					roomba.drive(0, 0);
 					break;
 				case SOUTH:
-					roomba::drive(0, 180);
+					roomba.drive(0, 180);
 					break;
 				case EAST:
-					roomba::drive(0, -90);
+					roomba.drive(0, -90);
 					break;
 				case WEST:
-					roomba::drive(0, 90);
+					roomba.drive(0, 90);
 					break;
 			}
 			break;
 		case SOUTH:
 			switch(path[currentNode+1]->directionTraveled) {
 				case NORTH:
-					roomba::drive(0, 180);
+					roomba.drive(0, 180);
 					break;
 				case SOUTH:
-					roomba::drive(0, 0);
+					roomba.drive(0, 0);
 					break;
 				case EAST:
-					roomba::drive(0, 90);
+					roomba.drive(0, 90);
 					break;
 				case WEST:
-					roomba::drive(0, -90);
+					roomba.drive(0, -90);
 					break;
 			}
 			break;
 		case EAST:
 			switch(path[currentNode+1]->directionTraveled) {
 				case NORTH:
-					roomba::drive(0, 90);
+					roomba.drive(0, 90);
 					break;
 				case SOUTH:
-					roomba::drive(0, -90);
+					roomba.drive(0, -90);
 					break;
 				case EAST:
-					roomba::drive(0, 0);
+					roomba.drive(0, 0);
 					break;
 				case WEST:
-					roomba::drive(0, 180);
+					roomba.drive(0, 180);
 					break;
 			}
 			break;
 		case WEST:
 			switch(path[currentNode+1]->directionTraveled) {
 				case NORTH:
-					roomba::drive(0, -90);
+					roomba.drive(0, -90);
 					break;
 				case SOUTH:
-					roomba::drive(0, 90);
+					roomba.drive(0, 90);
 					break;
 				case EAST:
-					roomba::drive(0, 180);
+					roomba.drive(0, 180);
 					break;
 				case WEST:
-					roomba::drive(0, 0);
+					roomba.drive(0, 0);
 					break;
 			}
 			break;

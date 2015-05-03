@@ -35,6 +35,7 @@ public:
 	Navigation(const char* filename);
 	void inputNodes(const char* filename);
 	bool travelFromSourceToSink(Node* source, Node* sink);
+	Node* walkToStartingNode();
 	Node* getNode(int index);
 
 	//Used to test private functions
@@ -43,8 +44,7 @@ public:
 
 private:
 	void moveForwardUntilSignOrBlockage();
-	bool walkPath(const vector<Node*>& path);
-	//Node walkToStartingNode();
+	bool walkPath(const vector<Node*>& path);	
 	vector<Node*> findPath(Node* source, Node* sink);
 	vector<Node*> reconstructPath(Node* current);
 	void incrementWeight(Node* n1, Node* n2);
