@@ -335,7 +335,7 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
     }
   }
 
-  return reconstructPath(&*source, &*sink);
+  return reconstructPath(source, sink);
 }
 
 vector<Node*> Navigation::reconstructPath(Node* source, Node* sink)

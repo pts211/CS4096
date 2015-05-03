@@ -46,7 +46,7 @@ private:
 	void moveForwardUntilSignOrBlockage();
 	bool walkPath(const vector<Node*>& path);	
 	vector<Node*> findPath(Node* source, Node* sink);
-	vector<Node*> reconstructPath(Node* current);
+	vector<Node*> reconstructPath(Node* current, Node* sink);
 	void incrementWeight(Node* n1, Node* n2);
 	void outputPath(const vector<Node*>& path);
 	void outputAllNodes();
