@@ -23,7 +23,7 @@ CXX = /usr/bin/g++-4.8
 #CXXFLAGS = -std=c++11 -I.. -Wextra -pthread -lwiringPi -g -Wall -W
 #CXXFLAGS = -std=c++11 -I.. -Wextra -pthread -lftdi -g -Wall -W
 #To run with the gtest framework, use the below CXXFLAGS.
-CXXFLAGS = -std=c++11 -I.. -Wextra -pthread -lgtest -lftdi -g -Wall -W -w
+CXXFLAGS = -std=c++11 -I.. -pthread -lgtest -lftdi -g -w 
 LIBS = `pkg-config --libs opencv` `pkg-config --cflags opencv`
 #-pedantic-errors 
 
