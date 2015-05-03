@@ -1,8 +1,8 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
-#include "../OpenCV/camera.h"
-#include "../Roomba/Roomba.h"
+#include "camera.h"
+#include "Roomba.h"
 // #include "Roomba.h"
 #include <iostream>
 #include <vector>
