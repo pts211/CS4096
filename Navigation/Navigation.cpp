@@ -74,6 +74,37 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   return true; //or false if ???
 }
 
+Node* Navigation::getNode(int index)
+{
+  return &allNodes[index];
+}
+
+vector<Node*> Navigation::dbgReconstructPath(Node* current)
+{
+  vector<Node*> path;
+
+  #ifdef TEST
+    return reconstructPath(current);
+  #else
+    cout << "This function is only for testing." << endl;   
+  #endif
+
+  return path;
+}
+
+vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
+{
+  vector<Node*> path;
+
+  #ifdef TEST
+    return findPath(source, sink);
+  #else
+    cout << "This function is only for testing." << endl;   
+  #endif
+
+  return path;
+}
+
 bool Navigation::walkPath(const vector<Node*>& path)
 {
   //walk the walk using roomba commands
@@ -160,30 +191,3 @@ void Navigation::outputAllNodes()
   }
 }
 
-Node* Navigation::getNode(int index) {
-	return &allNodes[index];
-}
-
-vector<Node*> Navigation::dbgReconstructPath(Node* current) {
-	vector<Node*> path;
-
-	#ifdef TEST
-		return reconstructPath(current);
-	#else
-		cout << "This function is only for testing." << endl;		
-	#endif
-
-	return path;
-}
-
-vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink) {
-	vector<Node*> path;
-
-	#ifdef TEST
-		return findPath(source, sink);
-	#else
-		cout << "This function is only for testing." << endl;		
-	#endif
-
-	return path;
-}

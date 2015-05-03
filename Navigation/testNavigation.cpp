@@ -34,7 +34,8 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 
-void testInputNodes(const char* file) {
+void testInputNodes(const char* file)
+{
 	Navigation defaultNav;
 
 	defaultNav.inputNodes(file);
