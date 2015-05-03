@@ -12,7 +12,7 @@ double Node::DNE = 1000000.0;
 
 Navigation::Navigation(const char* filename)
 {
-  inputNodes(filename); //forgot what your formwat was clayton and don't want to deal with it too much
+  inputNodes(filename); //forgot what your format was clayton and don't want to deal with it too much
   if(allNodes.size() > 1) //keep in mind, the output path doesn't include the source
   {
     cout << "from " << allNodes[0].name << " to " << allNodes[allNodes.size()-1].name << endl;
@@ -24,32 +24,32 @@ void Navigation::inputNodes(const char* filename)
 {
 	ifstream in;
 	string inStr;
-	int numNodes;
+	int numNeighbors;
 
 	in.open(filename);
 
-	if(in.good())
-  { //if the file was successfully opened
-		getline(in, inStr); //read the number of nodes
+	if(in.good()){ //if the file was successfully opened
+		in >> inStr; //read the number of nodes
 		numNodes = atoi(inStr.c_str()); //change the string we read to an int
-		for(int i = 0; i < numNodes; i++)
-    { //loop for each node we have
-			getline(in, inStr); //read the name of a node
-      //cout << inStr << endl;
+		// cout << "num nodes: " << numNodes << endl;
+		for(int i = 0; i < numNodes; i++){ //loop for each node we have
+			in >> inStr; //read the name of a node
+      		// cout << "Name: " << inStr << endl;
 			Node n(inStr, Node::DNE); //create a new node with nonexistant g value
-      n.parent = NULL;
+      		n.parent = NULL;
 			allNodes.push_back(n); //put that node in the list of all nodes
 		}
 
-		for(int i = 0; i < numNodes; i++)
-    { //loop for each node we have
-			getline(in, inStr); //read the number of neighbors a node has
-      cout << "numNeighbors :: " << atoi(inStr.c_str()) << endl; //output is wrong here
-			for(int j = 0; j < atoi(inStr.c_str()); j++)
-      { //loop for each neighbor of a node
-				getline(in, inStr, ','); //read the nodes neighbor
+		for(int i = 0; i < numNodes; i++){ //loop for each node we have
+			in >> inStr; //read the number of neighbors a node has
+			numNeighbors = atoi(inStr.c_str());
+      		// cout << "numNeighbors :: " << numNeighbors << endl; //output is wrong here      		
+			for(int j = 0; j < numNeighbors; j++) { //loop for each neighbor of a node
+				in >> inStr; //read the nodes neighbor
+				// cout << "Neighbor: " << inStr << endl;
 				allNodes[i].neighbors.push_back(&allNodes[atoi(inStr.c_str())]); //store the node in the list of neighbors
-				getline(in, inStr, ':'); //read the neighbors weight
+				in >> inStr; //read the neighbors weight
+				// cout << "Weight: " << inStr << endl;
 				allNodes[i].weights.push_back(atoi(inStr.c_str())); //assign the weight
 			}
 		}
@@ -65,7 +65,9 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   {
     //path from CURRENT place to sink Node                                                  FIX THIS
     path = findPath(source, sink); //should be (current, sink) with current starting at source
-    outputPath(path);
+    #ifndef TEST 
+    outputPath(path); 
+    #endif
     arrived = walkPath(path);
   }
 
@@ -80,7 +82,7 @@ bool Navigation::walkPath(const vector<Node*>& path)
   return true;
 }
 
-//this is now BFS not A*... because we don't know a heuristic and it don't matter anyway (small graphs)
+//this is now BFS not A*... because we don't know a heuristic and it don't matter ("doesn't matter", you sound like a hick) anyway (small graphs)
 vector<Node*> Navigation::findPath(Node* source, Node* sink)
 {
   //cout << "findPath" << endl;
@@ -100,7 +102,7 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
   {
     //cout << "loop openSet.size() :: " << openSet.size() << endl;
     Node* current = openSet.front();
-    cout << current->name << endl;
+    // cout << current->name << endl;
     openSet.pop();
 
     //for each neighbor in current->neighbors
@@ -126,10 +128,10 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
     }
   }
 
-  return reconstruct_path(sink);
+  return reconstructPath(sink);
 }
 
-vector<Node*> Navigation::reconstruct_path(Node* current)
+vector<Node*> Navigation::reconstructPath(Node* current)
 {
   vector<Node*> path;
   while(current->parent != NULL)
@@ -158,3 +160,30 @@ void Navigation::outputAllNodes()
   }
 }
 
+Node* Navigation::getNode(int index) {
+	return &allNodes[index];
+}
+
+vector<Node*> Navigation::dbgReconstructPath(Node* current) {
+	vector<Node*> path;
+
+	#ifdef TEST
+		return reconstructPath(current);
+	#else
+		cout << "This function is only for testing." << endl;		
+	#endif
+
+	return path;
+}
+
+vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink) {
+	vector<Node*> path;
+
+	#ifdef TEST
+		return findPath(source, sink);
+	#else
+		cout << "This function is only for testing." << endl;		
+	#endif
+
+	return path;
+}
