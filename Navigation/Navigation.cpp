@@ -123,7 +123,7 @@ Node* Navigation::walkToStartingNode()
 		if(!cam->getfloorsign().empty()) {
 			for(int i = 0; i < allNodes.size() - 1; i++) {
 				if(cam->getfloorsign() == allNodes[i]->name) {
-					return allNodes[i];
+					return &allNodes[i];
 				}
 			}
 		}
@@ -156,7 +156,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
   if(!cam->getfloorsign().empty())
   {
     //move forward just a bit more so we're on top of it.
-    drive(100, 0); //temp arbitrary numbers
+    roomba.drive(100, 0); //temp arbitrary numbers
   }
 }
 
@@ -166,10 +166,10 @@ bool Navigation::walkPath(const vector<Node*>& path)
   if(path.empty())
     return false;
   //assume we're on node path[0] and turn towards path[1].
-
+  bool arrived = false;
+	
   for(size_t i=1; i<path.size(); ++i)
   {
-    bool arrived = false;
     string nodeGoal = path[i]->name;
   	while(!arrived) //is this loop actually doing anything? i.e. does it always only run once?
     {
@@ -335,7 +335,7 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
     }
   }
 
-  return reconstructPath(source, sink);
+  return reconstructPath(&*source, &*sink);
 }
 
 vector<Node*> Navigation::reconstructPath(Node* source, Node* sink)
