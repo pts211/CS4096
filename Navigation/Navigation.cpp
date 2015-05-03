@@ -118,10 +118,12 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
 
 void Navigation::rotate(int degrees) {
   int degreesRotated = 0;
+  int16_t speed = 250;
+  int16_t direction = -1;
 
   sensor.getAngle();
     if(degrees < 0) {
-        roomba.drive((int16_t)250, (int16_t)-1);
+        roomba.drive(speed, direction);
         while((degreesRotated > degrees - 5) || (degreesRotated < degrees + 5)) {
             usleep(10);
             degreesRotated -= sensor.getAngle();
