@@ -20,6 +20,7 @@ int main()
 {
 	camera cam;
  
+  createTrackbars();
  
 	while(1)
 	{
@@ -42,7 +43,7 @@ void createTrackbars()
 {
 	//create window for trackbars
 
-	namedWindow(trackbarWindowName,0);
+	namedWindow(trackbarWindowName,CV_WINDOW_OPENGL);
 	char TrackbarName[512];
 	
 	sprintf( TrackbarName, "Edges", EDGE_NUM);
