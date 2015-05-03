@@ -56,7 +56,7 @@ void Navigation::inputNodes(const char* filename)
 				allNodes[i].neighbors.push_back(&allNodes[neighbor]); //store the node in the list of neighbors
 				// in >> inStr; //read the neighbors weight
 				allNodes[i].weights.push_back(weight); //assign the weight
-				allNodes[i].directions.push_back(direction); //assign the direction we need to go in to reach the neighbor
+				allNodes[i].allDirections.push_back(direction); //assign the direction we need to go in to reach the neighbor
 			}
 		}
 	}
@@ -172,6 +172,7 @@ bool Navigation::walkPath(const vector<Node*>& path)
           incrementWeight(path[i-1], path[i]);
 
   		  path = findPath(path[i-1], path[path.size()-1]);
+  		  turnAtIntersection(path, 0);
           return walkPath(path);
   		}
       	else if(!cam.getfloorsign().empty())
@@ -179,14 +180,83 @@ bool Navigation::walkPath(const vector<Node*>& path)
   			if(cam.getfloorsign() == path[path.size()-1]->name) {
   				arrived = true;
   			} else {
-  				//check what direction we need to go
-  				//turn
+  				turnAtIntersection(path, i);
   			}
   		}
   	}
   }
 
   return arrived;
+}
+
+void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
+
+	switch(path[currentNode]->directionTraveled) {
+		case 1:			
+			switch(path[currentNode+1]->directionTraveled) {
+				case 1:
+					roomba::drive(0, 0);
+					break;
+				case 2:
+					roomba::drive(0, 180);
+					break;
+				case 3:
+					roomba::drive(0, -90);
+					break;
+				case 4:
+					roomba::drive(0, 90);
+					break;
+			}
+			break;
+		case 2:
+			switch(path[currentNode+1]->directionTraveled) {
+				case 1:
+					roomba::drive(0, 180);
+					break;
+				case 2:
+					roomba::drive(0, 0);
+					break;
+				case 3:
+					roomba::drive(0, 90);
+					break;
+				case 4:
+					roomba::drive(0, -90);
+					break;
+			}
+			break;
+		case 3:
+			switch(path[currentNode+1]->directionTraveled) {
+				case 1:
+					roomba::drive(0, 90);
+					break;
+				case 2:
+					roomba::drive(0, -90);
+					break;
+				case 3:
+					roomba::drive(0, 0);
+					break;
+				case 4:
+					roomba::drive(0, 180);
+					break;
+			}
+			break;
+		case 4:
+			switch(path[currentNode+1]->directionTraveled) {
+				case 1:
+					roomba::drive(0, -90);
+					break;
+				case 2:
+					roomba::drive(0, 90);
+					break;
+				case 3:
+					roomba::drive(0, 180);
+					break;
+				case 4:
+					roomba::drive(0, 0);
+					break;
+			}
+			break;
+	}
 }
 
 vector<Node*> Navigation::findPath(Node* source, Node* sink)
@@ -228,6 +298,8 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
           openSet.push(neighbor);
         //came_from[neighbor] = current
         neighbor->parent = current;
+        //set the direction we will travel
+        neighbor->directionTraveled = current->allDirections[i];
         //g_score[neighbor] = tentative_g_score
         neighbor->g_score= tempScore;
       }

@@ -22,7 +22,8 @@ struct Node
 	// vector<std::tuple<Node*, int, Direction>> info;	
 	vector<Node*> neighbors;
 	vector<double> weights;
-	vector<int> directions;
+	vector<int> allDirections;
+	int directionTraveled;
 	static double DNE;
 	static double LARGE_NUM;
 };
@@ -49,6 +50,7 @@ private:
 	void incrementWeight(Node* n1, Node* n2);
 	void outputPath(const vector<Node*>& path);
 	void outputAllNodes();
+	void turnAtIntersection(vector<Node*> path, int currentNode);
 	vector<Node> allNodes;
 	int numNodes;
 	camera *cam;
