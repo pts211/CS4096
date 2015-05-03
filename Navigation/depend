@@ -1,4 +1,0 @@
-Navigation.o: Navigation.cpp Navigation.h ../OpenCV/camera.h \
- ../OpenCV/camera.hpp ../Roomba/Roomba.h ../Roomba/RoombaSensors.h
-testNavigation.o: testNavigation.cpp Navigation.h ../OpenCV/camera.h \
- ../OpenCV/camera.hpp ../Roomba/Roomba.h ../Roomba/RoombaSensors.h
