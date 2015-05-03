@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include "../OpenCV/camera.h"
+#include "../Roomba/Roomba.h"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -12,7 +14,6 @@ using namespace std;
 
 struct Node
 {
-
 	Node(string name, int g): name(name), g_score(g) {} //, f_score(f) {}
 	string name;
 	double g_score; //cost from source
@@ -23,13 +24,12 @@ struct Node
 	vector<double> weights;
 	vector<int> directions;
 	static double DNE;
+	static double LARGE_NUM;
 };
 
 class Navigation
 {
 public:
-	int numNodes;
-
 	Navigation() {};
 	Navigation(const char* filename);
 	void inputNodes(const char* filename);
@@ -41,13 +41,18 @@ public:
 	vector<Node*> dbgFindPath(Node* source, Node* sink);
 
 private:
+	void moveForwardUntilSignOrBlockage();
 	bool walkPath(const vector<Node*>& path);
-	Node walkToStartingNode();
+	//Node walkToStartingNode();
 	vector<Node*> findPath(Node* source, Node* sink);
 	vector<Node*> reconstructPath(Node* current);
+	void incrementWeight(Node* n1, Node* n2);
 	void outputPath(const vector<Node*>& path);
 	void outputAllNodes();
 	vector<Node> allNodes;
+	int numNodes;
+	camera *cam;
+	Roomba roomba;
 };
 
 #endif

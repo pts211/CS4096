@@ -9,6 +9,7 @@
 using namespace std;
 
 double Node::DNE = 1000000.0;
+double Node::LARGE_NUM = 1000.0;
 
 Navigation::Navigation(const char* filename)
 {
@@ -130,24 +131,55 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
 	//return OR::currentNode();
 }*/
 
+void Navigation::moveForwardUntilSignOrBlockage()
+{
+  roomba.drive(500, 0); //                              is drive temporary or constant until you drive(0, 0)???????
+  while(cam.getfloorsign().empty() && !cam.getpathisblocked())
+  {
+    cam.update();
+  }
+  if(!cam.getfloorsign().empty())
+  {
+    //move forward just a bit more so we're on top of it.
+    drive(100, 0); //temp arbitrary numbers
+  }
+}
+
 bool Navigation::walkPath(const vector<Node*>& path)
 {
   //walk the walk using roomba commands
-	// while(!arrived) {
-	// 	OR::update()
-	// 	if(OR::getpathisblocked()) {
-			//update weights
-			//Roomba::drive(0, 180)
-			//go back to last interstection
-			//run findPath
-			//Roomba::drive(fast, )
-		// } else if(OR::getfloorsign()!="") {
-			//move until we're in the intersection
-			//check what direction we need to go
-			//turn & drive
-		// }
-	// }
-  
+  if(path.empty())
+    return false;
+  //assume we're on node path[0] and turn towards path[1].
+
+  for(size_t i=1; i<path.size(); ++i)
+  {
+    bool arrived = false;
+    string nodeGoal = path[i]->name;
+  	while(!arrived) //is this loop actually doing anything? i.e. does it always only run once?
+    {
+  		moveForwardUntilSignOrBlockage();
+  		if(cam.getpathisblocked())
+      {
+        cout << "Path is blocked. Turning around." << endl;
+  			roomba.drive(0, 180); //turn around
+  			//move towards last intersection
+        moveForwardUntilSignOrBlockage();                //ASSUMING NO BLOCKAGE HERE
+
+        //update weights where blockage exists
+        incrementWeight(path[i-1], path[i]);
+
+  			path = findPath(path[i-1], path[path.size()-1]);
+        return walkPath(path);
+  		}
+      else if(!cam.getfloorsign().empty())
+      {
+  			arrived = true;
+  			//check what direction we need to go
+  			//turn
+  		}
+  	}
+  }
 
   //if blocked, restart pathfinding from current spot.
   return true;
@@ -198,18 +230,40 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
     }
   }
 
-  return reconstructPath(sink);
+  return reconstructPath(source, sink);
 }
 
-vector<Node*> Navigation::reconstructPath(Node* current)
+vector<Node*> Navigation::reconstructPath(Node* source, Node* sink)
 {
+  Node* current = sink;
   vector<Node*> path;
   while(current->parent != NULL)
   {
     path.insert(path.begin(), current);
     current = current->parent;
   }
+  path.insert(path.begin(), source);
   return path;
+}
+
+void Navigation::incrementWeight(Node* n1, Node* n2)
+{
+  for(size_t i=0; i<n1->neighbors.size(); ++i)
+  {
+    if(n1->neighbors[i] == n2)
+    {
+      n1->weights[i] += Node::LARGE_NUM;
+      break;
+    }
+  }
+  for(size_t i=0; i<n2->neighbors.size(); ++i)
+  {
+    if(n2->neighbors[i] == n1)
+    {
+      n2->weights[i] += Node::LARGE_NUM;
+      break;
+    }
+  }
 }
 
 void Navigation::outputPath(const vector<Node*>& path)
