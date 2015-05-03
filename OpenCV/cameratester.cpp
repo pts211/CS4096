@@ -6,7 +6,10 @@ using namespace std;
 
 void createTrackbars();
 
-const string trackbarWindowName = "Trackbars";
+const string trackbarWindowName1 = "Trackbar1";
+const string trackbarWindowName2 = "Trackbar2";
+const string trackbarWindowName3 = "Trackbar3";
+const string trackbarWindowName4 = "Trackbar4";
 int EDGE_NUM = 50;
 const int EDGE_NUM_MAX = 255;
 int B_MIN = 40;
@@ -46,21 +49,27 @@ void createTrackbars()
 {
 	//create window for trackbars
  
-	namedWindow(trackbarWindowName,0);
+	namedWindow(trackbarWindowName1,1);
+  namedWindow(trackbarWindowName2,1);
+  namedWindow(trackbarWindowName3,1);
+  namedWindow(trackbarWindowName4,1);
 
-	char TrackbarName[50];
+	char TrackbarName1[50];
+  char TrackbarName2[50];
+  char TrackbarName3[50];
+  char TrackbarName4[50];
 	
  
-	sprintf( TrackbarName, "Edges", EDGE_NUM_MAX);
-	//sprintf( TrackbarName, "B_MIN", B_LIM);
-	//sprintf( TrackbarName, "G_MAX", G_LIM);
-	//sprintf( TrackbarName, "R_MAX", R_LIM);	
+	sprintf( TrackbarName1, "Edges", EDGE_NUM_MAX);
+	sprintf( TrackbarName2, "B_MIN", B_LIM);
+	sprintf( TrackbarName3, "G_MAX", G_LIM);
+	sprintf( TrackbarName4, "R_MAX", R_LIM);	
  
  
-	createTrackbar( TrackbarName, trackbarWindowName, &EDGE_NUM, EDGE_NUM_MAX, on_trackbar);
-	//createTrackbar( TrackbarName, trackbarWindowName, &B_MIN, B_LIM, on_trackbar );
-	//createTrackbar( TrackbarName, trackbarWindowName, &G_MAX, G_LIM, on_trackbar );
-	//createTrackbar( TrackbarName, trackbarWindowName, &R_MAX, R_LIM, on_trackbar );
+	createTrackbar( TrackbarName1, trackbarWindowName1, &EDGE_NUM, EDGE_NUM_MAX, on_trackbar);
+	createTrackbar( TrackbarName2, trackbarWindowName2, &B_MIN, B_LIM, on_trackbar );
+	createTrackbar( TrackbarName3, trackbarWindowName3, &G_MAX, G_LIM, on_trackbar );
+	createTrackbar( TrackbarName4, trackbarWindowName4, &R_MAX, R_LIM, on_trackbar );
 
 	//create trackbars and insert them into window
 	//3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
