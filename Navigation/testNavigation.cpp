@@ -75,7 +75,8 @@ void testInputNodes(const char* file)
 	assert(defaultNav.getNode(4)->weights[1]==5);
 }
 
-void testReconstructPath(const char* file) {
+void testReconstructPath(const char* file)
+{
 	Navigation defaultNav;
 	vector<Node*> path;
 
@@ -96,7 +97,8 @@ void testReconstructPath(const char* file) {
 	assert(path[3] == defaultNav.getNode(4));
 }
 
-void testFindPath(const char* file) {
+void testFindPath(const char* file)
+{
 	Navigation defaultNav;
 	vector<Node*> path;
 
@@ -110,7 +112,8 @@ void testFindPath(const char* file) {
 	assert(path[3] == defaultNav.getNode(4));	
 }
 
-void testTravelFromSourceToSink(const char* file) {
+void testTravelFromSourceToSink(const char* file)
+{
 	Navigation defaultNav;
 	bool arrived;
 
