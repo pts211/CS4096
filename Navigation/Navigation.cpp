@@ -122,7 +122,7 @@ Node* Navigation::walkToStartingNode()
 		moveForwardUntilSignOrBlockage();
 		if(!cam->getfloorsign().empty()) {
 			for(int i = 0; i < allNodes.size() - 1; i++) {
-				if(cam->getfloorsign() == allNodes[i]->name) {
+				if(cam->getfloorsign() == allNodes[i].name) {
 					return &allNodes[i];
 				}
 			}
@@ -160,7 +160,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
   }
 }
 
-bool Navigation::walkPath(const vector<Node*>& path)
+bool Navigation::walkPath(vector<Node*>& path)
 {
   //walk the walk using roomba commands
   if(path.empty())
