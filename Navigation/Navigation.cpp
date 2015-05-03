@@ -12,7 +12,7 @@ double Node::DNE = 1000000.0;
 
 Navigation::Navigation(const char* filename)
 {
-  inputNodes(filename); //forgot what your formwat was clayton and don't want to deal with it too much
+  inputNodes(filename); //forgot what your format was clayton and don't want to deal with it too much
   if(allNodes.size() > 1) //keep in mind, the output path doesn't include the source
   {
     cout << "from " << allNodes[0].name << " to " << allNodes[allNodes.size()-1].name << endl;
