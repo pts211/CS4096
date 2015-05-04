@@ -34,7 +34,7 @@ class Navigation
 {
 public:
 	Navigation(bool test) {roomba.start(); roomba.powerOn(); roomba.getSensors(Sensor::ALL); startTime = clock(); testMode = test;}
-	Navigation(const char* filename);
+	Navigation(const char* filename, bool test);
 	void inputNodes(const char* filename);
 	bool travelFromSourceToSink(Node* source, Node* sink);
 	Node* walkToStartingNode();

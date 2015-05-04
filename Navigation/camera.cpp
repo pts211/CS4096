@@ -2,7 +2,19 @@
 using namespace std;
 using namespace cv;
 
-void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
+
+const int P_NUM_MAX = 100;
+const int B_LIM = 255;
+const int G_LIM = 255;
+const int R_LIM = 255;
+const int L_LIM = 480;
+const string trackbarWindowName1 = "Trackbar1";
+const string trackbarWindowName2 = "Trackbar2";
+const string trackbarWindowName3 = "Trackbar3";
+const string trackbarWindowName4 = "Trackbar4";
+const string trackbarWindowName5 = "Trackbar5";
+
+void camera::update()
 {
 
 	pathisblocked = false; //NO IMPLEMENTATION YET
@@ -12,186 +24,100 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 	
 	
 	while(!cap.isOpened())  // if not success, exit program
-    {
-        cout << "error cannot read from the camera" << endl;
-    }
+  {
+    cout << "error cannot read from the camera" << endl;
+  }
 	double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH); //get the width of frames of the video
 	double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT); //get the height of frames of the video
 
-	int x_length = 310;
-	int y_length = 400;
-
-	int center_x = dWidth/2;
-	int offset = 1;
+	int y_length = L_NUM; //max value of dHeight = 480
+  int x_length = int(dHeight);
 
 	double** plot;
 	plot = new double *[x_length];
 	for(int i=0; i<x_length; i++)
 	{
-			plot[i] = new double[2]; // 0 is for x, 1 is for y
+	  plot[i] = new double[2]; // 0 is for x, 1 is for y
 	}
-	double** plot2;
-	plot2 = new double *[x_length];
-	for(int i=0; i<x_length; i++)
-	{
-			plot2[i] = new double[2]; // 0 is for x, 1 is for y
+ 	int plot_length = 0;
+		
+
+
+	bool bSuccess = cap.read(img); // read a new frame from video
+  if (!bSuccess) //if not success, break loop
+  {
+    cout << "Cannot read a frame from video stream" << endl;
 	}
-	double** cplot;
-	cplot = new double *[x_length];
-	for(int i=0; i<x_length; i++)
+ 
+  double x_center;
+  double x_total;
+  
+  int sign_count = 0;
+  int sign_color = 220;
+	
+	for(int y = dHeight-1; y >= dHeight-y_length; y--)
 	{
-			cplot[i] = new double[2]; // 0 is for x, 1 is for y
-	}
-	double** cplot2;
-	cplot2 = new double *[x_length];
-	for(int i=0; i<x_length; i++)
-	{
-			cplot2[i] = new double[2]; // 0 is for x, 1 is for y
-	}
-	
-	
-	int plot_length, plot_length2;
-	int cplot_length, cplot_length2;
-
-	
-	//Sleep(100);
-
-	bool bSuccess = cap.read(input); // read a new frame from video
-    if (!bSuccess) //if not success, break loop
-    {
-            cout << "Cannot read a frame from video stream" << endl;
-			// Sleep(1000);
-    }
-
-	img = input.clone();
-
-	
-	for(int x=0; x<dWidth; x++)
-	{
-		for(int y=0; y<dHeight; y++)
+    x_center = 0;
+    x_total = 0;
+    
+    //cout << "y: " << y << endl;
+ 
+		for(int x = dWidth-1; x >= 0; x--)
 		{
+     
+     //cout << "x: " << x << endl;
+   
 			Vec3b &intensity = img.at<Vec3b>(y,x);
-			if (intensity.val[0] < B_MIN && intensity.val[1] > G_MAX && intensity.val[2] > R_MAX)
+			if (intensity.val[0] > B_MIN && intensity.val[1] < G_MAX && intensity.val[2] < R_MAX)
+      {
+        x_center += x;
+        x_total++;
+        
+      }
+      else if( y>460 && x>310 && x<330 && intensity.val[0] > sign_color && intensity.val[1] > sign_color && intensity.val[2] > sign_color)
+      {
+         sign_count++;
+      
+      }
+      else
 			{
 				intensity.val[0] = 0 ;
 				intensity.val[1] = 0 ;
 				intensity.val[2] = 0 ;
-
 			}
+    }
+        
+    if(x_total >= P_NUM) //if enough points collected, then a valid data point, add to plot
+    {
+      //cout << "x_center: " << x_center << endl;
+      //cout << "x_total: " <<x_total << endl;
+    
+      x_center = x_center / x_total; //compute average x
+      
+      //cout << "x_center: " << x_center << endl;
+    
+      plot[plot_length][0] = dHeight-1 - y;
+      plot[plot_length][1] = dWidth-1 - x_center;
+      plot_length++;
+      
+      Vec3b &intensity = img.at<Vec3b>(y,x_center);
+      
+      intensity.val[0] = 0; 
+      intensity.val[1] = 0;
+      intensity.val[2] = 255; //RED      
+       
+    }    
+	}		 
+ 
+  if(sign_count >= 10)
+  {
+    floorsign = "A";
+  }
 
-
-		}
-	}
-	
-
-
-
-		cvtColor(input, edges, CV_BGR2GRAY);
-        GaussianBlur(edges,edges, cv::Size(7,7), 1.5, 1.5);
-        Canny(edges, edges, 0, EDGE_NUM, 3);
-
-		modi = edges.clone(); //NOT TEST
-		//cvtColor(pic, modi, CV_BGR2GRAY);///TEST ONLY
-
-		double left_slope = 0, right_slope = 0;
-		double cleft_slope = 0, cright_slope = 0;
-		//FOR LEFT AND RIGHT SIDE
-		 
-			 
-	Rect r(center_x - offset - x_length, dHeight - y_length, x_length, y_length);
-	Rect r2(center_x + offset, dHeight - y_length, x_length, y_length);
-			
-	Mat smallImg = modi(r);
-	Mat csmallImg = img(r);
-		
-	Mat smallImg2 = modi(r2);
-	Mat csmallImg2 = img(r2);
-
-					 
-
-	plot_length = 0; //left side
-	cplot_length = 0;
-	plot_length2 = 0; //right side
-	cplot_length2 = 0;
-	for(int x = 0; x < x_length; x++)
-	{
-		bool found = false;
-		bool found2 = false;
-		double color_center = 0;
-		double color_center2 = 0;
-
-		double total_color = 0;
-		double total_color2 = 0;
-
-		for(int y = 0; y < y_length; y++)
-		{
-			Scalar intensity = smallImg.at<uchar>(y,x);
-			Vec3b &cintensity = csmallImg.at<Vec3b>(y,x);	
-
-			Scalar intensity2 = smallImg2.at<uchar>(y,x);
-			Vec3b &cintensity2 = csmallImg2.at<Vec3b>(y,x);
-
-			if( intensity.val[0] == 255 & y!=0)
-			{
-			plot[ plot_length][0] = double(x);
-			plot[plot_length][1] = double(y);
-			found = true;
-			}
-			if( cintensity.val[0] > B_MIN && cintensity.val[1] < G_MAX && cintensity.val[2] < R_MAX)
-			{
-				color_center+=y;
-				total_color ++;
-
-			}				
-
-			if( intensity2.val[0] == 255 & y!=0)
-			{
-			plot2[plot_length2][0] = double(x);
-			plot2[plot_length2][1] = double(y);
-			found2 = true;
-			}
-			if( cintensity2.val[0] > B_MIN && cintensity2.val[1] < G_MAX && cintensity2.val[2] < R_MAX)
-			{
-				color_center2+=y;
-				total_color2 ++;
-			}
-				
-				 
-			if(y==0||y==y_length-1||x==0||x==x_length-1)
-			{
-				smallImg.at<uchar>(y,x) = 255;
-				smallImg2.at<uchar>(y,x) = 255;
-			}
-		}		 		
-		if (found)
-			plot_length++;
-		if (found2)
-			plot_length2++;
-
-		color_center = color_center / total_color;
-		color_center2 = color_center2 / total_color2;
-
-		if(total_color>0)
-		{
-			cplot[cplot_length][0] = double(x);
-			cplot[cplot_length][1] = color_center;
-			cplot_length++;
-		}
-			
-		if(total_color2>0)
-		{
-			cplot2[cplot_length2][0] = double(x);
-			cplot2[cplot_length2][1] = color_center2;
-			cplot_length2++;
-		}
-
-
-			 	
-	}
-		 
 
 	//linear regression1
 	double Sx,Sy,Sxy,x_bar,y_bar,b,a;
+  
 
 	x_bar = 0; y_bar = 0;
 	for(int i=0; i<plot_length; i++)
@@ -212,188 +138,101 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 
 	b = Sxy/Sx;
 	a = y_bar - (b * x_bar);
-	// double x_intercept = ((0 - a) / b) + center_x - offset - x_length; //relative to modi
-	int start_x = int( ((y_length-1 - a) / b) + center_x - offset - x_length );
-	int start_y = dHeight - 1;
+ 
+  /*
+	int start_x = 0;
+	int start_y = a;
 	Point pt1,pt2;
-	pt1.x = start_x;
-	pt1.y = start_y;
+	pt1.x = int(dWidth-1-start_y);
+	pt1.y = int(dHeight-1-start_x);
 
-	int end_x = int( (dHeight-1)/(0-b) + start_x);
-	int end_y = 0;
-	pt2.x = end_x;
-	pt2.y = end_y;
+	int end_x = dHeight-1;
+	int end_y = b*(dHeight-1) + a;
+	pt2.x = int(dWidth-1-start_y);
+	pt2.y = int(dHeight-1-start_x);
+  */
+	//line(img,pt1,pt2,Scalar(0,255,0),2,8);
+  intercept = a;
+	slope = b;
 
-	line(input,pt1,pt2,Scalar(255,255,255),2,8);
-	left_slope = 0 - b;
-
-	//linear regression2
-
-	x_bar = 0; y_bar = 0;
-	for(int i=0; i<plot_length2; i++)
-	{
-		x_bar+=plot2[i][0];
-		y_bar+=plot2[i][1];
-	}
-	x_bar = x_bar / plot_length2;
-	y_bar = y_bar / plot_length2;
-
-	Sx = 0; Sy = 0; Sxy = 0;
-	for(int i=0; i < plot_length2; i++)
-	{
-		Sx += pow((plot2[i][0] - x_bar),2);
-		Sy += pow((plot2[i][1] - y_bar),2);
-		Sxy += (plot2[i][0] - x_bar)*(plot2[i][1] - y_bar);
-	}
-
-	b = Sxy/Sx;
-	a = y_bar - (b * x_bar);
-	// double x_intercept = ((0 - a) / b) + center_x - offset - x_length; //relative to modi
-	start_x = int( ((y_length-1 - a) / b) + center_x + offset);
-	start_y = dHeight - 1;
-		
-	pt1.x = start_x;
-	pt1.y = start_y;
-
-	end_x = int( (dHeight-1)/(0-b) + start_x);
-	end_y = 0;
-	pt2.x = end_x;
-	pt2.y = end_y;
-
-	line(input,pt1,pt2,Scalar(255,255,255),2,8);
-	right_slope = 0 - b;
-
-	//linear regression3!
-
-	x_bar = 0; y_bar = 0;
-	for(int i=0; i<cplot_length2; i++)
-	{
-		x_bar+=cplot2[i][0];
-		y_bar+=cplot2[i][1];
-	}
-
-	x_bar = x_bar / cplot_length2;
-	y_bar = y_bar / cplot_length2;
-
-	Sx = 0; Sy = 0; Sxy = 0;
-	for(int i=0; i < cplot_length2; i++)
-	{
-		Sx += pow((cplot2[i][0] - x_bar),2);
-		Sy += pow((cplot2[i][1] - y_bar),2);
-		Sxy += (cplot2[i][0] - x_bar)*(cplot2[i][1] - y_bar);
-	}
-
-	b = Sxy/Sx;
-	a = y_bar - (b * x_bar);
-	// double x_intercept = ((0 - a) / b) + center_x - offset - x_length; //relative to modi
-	start_x = int( ((y_length-1 - a) / b) + center_x + offset);
-	start_y = dHeight - 1;
-		
-	pt1.x = start_x;
-	pt1.y = start_y;
-
-	end_x = int( (dHeight-1)/(0-b) + start_x);
-	end_y = 0;
-	pt2.x = end_x;
-	pt2.y = end_y;
-
-	line(input,pt1,pt2,Scalar(255,0,0),2,8);
-	cright_slope = 0 - b;
-
-	//linear regression4!!!!!!
-
-	x_bar = 0; y_bar = 0;
-	for(int i=0; i<cplot_length; i++)
-	{
-		x_bar+=cplot[i][0];
-		y_bar+=cplot[i][1];
-	}
-	x_bar = x_bar / cplot_length;
-	y_bar = y_bar / cplot_length;
-
-	Sx = 0; Sy = 0; Sxy = 0;
-	for(int i=0; i < cplot_length; i++)
-	{
-		Sx += pow((cplot[i][0] - x_bar),2);
-		Sy += pow((cplot[i][1] - y_bar),2);
-		Sxy += (cplot[i][0] - x_bar)*(cplot[i][1] - y_bar);
-	}
-
-	b = Sxy/Sx;
-	a = y_bar - (b * x_bar);
-	// double x_intercept = ((0 - a) / b) + center_x - offset - x_length; //relative to modi
-	start_x = int( ((y_length-1 - a) / b) + center_x - offset - x_length);
-	start_y = dHeight - 1;
-		
-	pt1.x = start_x;
-	pt1.y = start_y;
-
-	end_x = int( (dHeight-1)/(0-b) + start_x);
-	end_y = 0;
-	pt2.x = end_x;
-	pt2.y = end_y;
-
-	line(input,pt1,pt2,Scalar(255,0,0),2,8);
-	cleft_slope = 0 - b;
-
-
-	e_slope = left_slope + right_slope;
-	c_slope = cleft_slope + cright_slope;
-	// c_slope++;
-
-
-	 
-
-	  
-
-	/*
-	for(int i=0; i<plot_length; i++)
-	{
-		cout << plot[i][0] << ", " << plot[i][1] << endl;
-	}
-	while(1);
-	*/
+	
 	return;
 }
 
 void camera::output()
-{
-    
-  	// namedWindow("Input",0); //create a window called "MyVideo"
-  	// imshow("Input", input); //show the frame in "MyVideo" window
+{    
+ // namedWindow("img",0); //create a window 
+ // imshow("img", img); //show the frame 
+ 
+  // if (waitKey(1) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+  // 	{
+  // 	cout << "esc key is pressed by user" << endl;
+  //   cout << "Trackbars are: " << P_NUM << ", " << B_MIN << ", " << G_MAX << ", " << R_MAX << ", " << L_NUM << endl;   
    
-   //  namedWindow("Edges",0);
-   //  imshow("Edges", edges);
-    
-   //  namedWindow("Color",0);
-   //  imshow("Color",img); 
-    
-   
-  	// if (waitKey(1) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-  	// {
-  	// 	cout << "esc key is pressed by user" << endl;
-   //    exit(1);
-  	// }
+  //  exit(1);
+ 	// }
   
-  	cout << "[ " << pathisblocked << ", " << floorsign << ", " << e_slope << ", " << c_slope << " ]" << endl;
+  	cout << "[ " << pathisblocked << ", " << floorsign << ", " << intercept << ", " << slope << " ]" << endl;
   
     return;
 }
 
-
-Mat camera::getinput() const
-{
-	return input;
+void on_trackbar( int, void* )
+{//This function gets called whenever a
+    // trackbar position is changed
 }
 
-double camera::gete_slope() const
+void camera::createTrackBars()
 {
-	return e_slope;
+    //create window for trackbars
+ 
+  namedWindow(trackbarWindowName1,1);
+  namedWindow(trackbarWindowName2,1);
+  namedWindow(trackbarWindowName3,1);
+  namedWindow(trackbarWindowName4,1);
+  namedWindow(trackbarWindowName5,1);
+
+  char TrackbarName1[50];
+  char TrackbarName2[50];
+  char TrackbarName3[50];
+  char TrackbarName4[50];
+  char TrackbarName5[50];
+    
+ 
+    sprintf( TrackbarName1, "Edges", P_NUM_MAX);
+    sprintf( TrackbarName2, "B_MIN", B_LIM);
+    sprintf( TrackbarName3, "G_MAX", G_LIM);
+    sprintf( TrackbarName4, "R_MAX", R_LIM);    
+    sprintf( TrackbarName5, "L_NUM", L_LIM);
+ 
+    createTrackbar( TrackbarName1, trackbarWindowName1, &P_NUM, P_NUM_MAX, on_trackbar);
+    createTrackbar( TrackbarName2, trackbarWindowName2, &B_MIN, B_LIM, on_trackbar );
+    createTrackbar( TrackbarName3, trackbarWindowName3, &G_MAX, G_LIM, on_trackbar );
+    createTrackbar( TrackbarName4, trackbarWindowName4, &R_MAX, R_LIM, on_trackbar );
+    createTrackbar( TrackbarName5, trackbarWindowName5, &L_NUM, L_LIM, on_trackbar );
+    //create trackbars and insert them into window
+    //3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
+    //the max value the trackbar can move (eg. H_HIGH), 
+    //and the function that is called whenever the trackbar is moved(eg. on_trackbar)
+    //    
+    return;
 }
 
-double camera::getc_slope() const
+//ACCESSORS DEFINITIONS
+
+Mat camera::getimg() const
 {
-	return c_slope;
+	return img;
+}
+
+double camera::getintercept() const
+{
+	return intercept;
+}
+
+double camera::getslope() const
+{
+	return slope;
 }
 
 bool camera::getpathisblocked() const

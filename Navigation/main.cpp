@@ -2,16 +2,19 @@
 #include <iostream>
 using namespace std;
 
+
 int main(int argc, char const *argv[]) 
 {
   bool testMode = false;
   if(argc > 1)
-  	testMode = true;
-  Navigation defaultNav(testMode);
+    if (argv[1] == "1")
+  	  testMode = true;
+  // Navigation defaultNav(testMode);
 
+  Navigation realNav("BasementFactory", testMode);
   // cout << "Power: "
-  defaultNav.inputNodes("SampleFactory.txt");
-  defaultNav.walkToStartingNode();
+  // defaultNav.inputNodes("BasementFactory.txt");
+  // defaultNav.walkToStartingNode();
 
     // Roomba r;
     // r.start();
@@ -20,3 +23,4 @@ int main(int argc, char const *argv[])
 
   return 0;
 }
+

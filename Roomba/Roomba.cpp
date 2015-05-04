@@ -36,8 +36,7 @@ void Roomba::start()
   // setDTR(0);
   // write(Opcode::START);
   // write(Mode::CONTROL);
-  // write(Mode::MAX);
-  
+  // write(Mode::MAX);  
 }
 
 void Roomba::setBaud(unsigned char baud)
@@ -76,6 +75,56 @@ bool Roomba::getSensors(int sensor_pkt)
   }
   
   return true;
+}
+
+void Roomba::turn(int degrees)
+{
+  
+  int dir = (degrees < 0)?-1:1;
+  const int GOAL = math.abs(degrees);
+  int total_turned = 0;
+  
+  int speed = 100;
+  
+  if( !getSensors(SENSORS::PHYSICAL) ) {
+    cout<<"Logic is literally broken."<<endl;
+  }
+  drive(speed,dir);
+  while( total_turned < degrees )
+  {
+        
+  
+  }
+  
+    int degreesRotated = 0;
+  int16_t speed = 50;
+  int16_t direction = -1;
+
+  // roomba.getSensors(Sensor::ALL).getAngle();
+  roomba.drive(0,0);
+  sensor.getAngle();
+  if(degrees < 0)
+  {
+    roomba.drive(speed, direction);
+    while((degreesRotated > degrees - 1) || (degreesRotated < degrees + 1))
+    {
+      usleep(100);
+      // degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
+      degreesRotated -= sensor.getAngle();
+    }    
+  }
+  else
+  {
+    roomba.drive(speed, 1);
+    while((degreesRotated < degrees - 1) || (degreesRotated > degrees + 1))
+    {
+      usleep(100);
+      // degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
+      cout << "Degrees rotated: " << degreesRotated << endl;
+      degreesRotated += sensor.getAngle();
+    }
+  }
+  roomba.drive(0, 0); 
 }
 
 void Roomba::drive(int16_t velocity, int16_t radius)

@@ -11,20 +11,21 @@ using namespace std;
 
 double Node::DNE = 1000000.0;
 double Node::LARGE_NUM = 1000.0;
-const int edge = 80;
-const int red = 110;
-const int green = 110;
-const int blue = 170;
+// const int edge = 80;
+// const int red = 110;
+// const int green = 110;
+// const int blue = 170;
 const int STRAIGHT = 32768;
 
-Navigation::Navigation(const char* filename)
+Navigation::Navigation(const char* filename, bool test)
 {
+  testMode = test;
   inputNodes(filename); //forgot what your format was clayton and don't want to deal with it too much
   if(allNodes.size() > 1) //keep in mind, the output path doesn't include the source
   {
     cout << "from " << allNodes[0].name << " to " << allNodes[allNodes.size()-1].name << endl;
-    // travelFromSourceToSink(&allNodes[0], &allNodes[allNodes.size()-1]); 
-    travelFromSourceToSink(walkToStartingNode(), &allNodes[allNodes.size()-1]);
+    travelFromSourceToSink(&allNodes[0], &allNodes[allNodes.size()-1]); 
+    // travelFromSourceToSink(walkToStartingNode(), &allNodes[allNodes.size()-1]);
   }
 }
 
@@ -84,6 +85,7 @@ void Navigation::inputNodes(const char* filename)
       }
     }
   }
+  cout << "Finished inputing nodes" << endl;
 }
 
 bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
@@ -92,6 +94,7 @@ bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
   #ifdef DEBUG 
   outputPath(path); 
   #endif
+  cout << "size: " << path.size() << endl;
   return walkPath(path);
 }
 
@@ -164,7 +167,7 @@ Node* Navigation::walkToStartingNode()
   while(1)
   {
     cam.output();
-    sleep(2);
+    // sleep(2);
     moveForwardUntilSignOrBlockage();
     if(!getFloorSign().empty())
       for(int i = 0; i < allNodes.size() - 1; i++)
@@ -173,7 +176,7 @@ Node* Navigation::walkToStartingNode()
 
     if(getPathIsBlocked())
     {    
-      // rotate(180);
+      rotate(180);
     }  
   }
 }
@@ -184,44 +187,45 @@ void Navigation::moveForwardUntilSignOrBlockage()
   cout << "Percent Power: " << (float)roomba.getSensor().getCharge() / (float)roomba.getSensor().getCapacity() << endl;
   cout << "moveForwardUntilSignOrBlockage" << endl;
   roomba.drive(150, STRAIGHT);
-  cout << "start cam check loop" << endl;
+  // cout << "start cam check loop" << endl;
   while(getFloorSign().empty() && !getPathIsBlocked())
   {
-    cout << "about to update" << endl;
-    cam.update(edge, blue, green, red);
+    // cout << "about to update" << endl;
+    cam.update();
     cam.output();
-    cout << "updated" << endl;
+    // cout << "updated" << endl;
 
-    if((cam.getc_slope() != cam.getc_slope()))
+    if((cam.getslope() != cam.getslope()))
     {
       roomba.drive(0,0);
-      cout << "NAN" << endl;
+      // cout << "NAN" << endl;
     }
     else
     {
-      if(cam.getc_slope() < -.7 && !(cam.getc_slope() != cam.getc_slope()))
+      if(cam.getslope() < -.7 && !(cam.getslope() != cam.getslope()))
       { //arbitrary tolerances. slope will be 0 if we are going straight      
-        cout << "too far to the right" << endl;
-        while(cam.getc_slope() < -.3)
+        cout << "TURNING TO THE RIGHT" << endl;
+        while(cam.getslope() < -.4)
         {
-          roomba.drive(200, 1500); //arbitrary radius, change later
+          roomba.drive(200, -1500); //arbitrary radius, change later
           // rotate(5);
-          cam.update(edge, blue, green, red);
+          cam.update();
           cam.output();
         }
       }
-      else if(cam.getc_slope() > .7 && !(cam.getc_slope() != cam.getc_slope()))
+      else if(cam.getslope() > .7 && !(cam.getslope() != cam.getslope()))
       {
-        cout << "too far to the left" << endl;
-        while(cam.getc_slope() > -.3 )
+        cout << "TURNING TO THE LEFT" << endl;
+        while(cam.getslope() > .4 )
         {
-          roomba.drive(200, -1500);
+          roomba.drive(200, 1500);
           // rotate(-5);
-          cam.update(edge, blue, green, red);
+          cam.update();
           cam.output();
         }
       }    
-    
+
+      cout << "DRIVING STRAIGHT" << endl;
       roomba.drive(150, STRAIGHT);
     }
   }
@@ -281,8 +285,8 @@ bool Navigation::walkPath(vector<Node*> path)
         path = findPath(path[i-1], path[path.size()-1]);
         turnAtIntersection(path, 0);
         return walkPath(path);
-      }
-      else if(!getFloorSign().empty())
+      } else
+      // else if(!getFloorSign().empty())      
       {
         if(getFloorSign() == path[path.size()-1]->name)
         {
