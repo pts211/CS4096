@@ -195,7 +195,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
     cam.output();
     // cout << "updated" << endl;
 
-    if((cam.getslope() != cam.getslope()))
+    if((cam.getslope() != cam.getslope())) //if the value is NaN
     {
       roomba.drive(0,0);
       // cout << "NAN" << endl;
@@ -203,7 +203,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
     else
     {
       if(cam.getslope() < -.7 && !(cam.getslope() != cam.getslope()))
-      { //arbitrary tolerances. slope will be 0 if we are going straight      
+      { //arbitrary tolerances. slope will be 0 if we are going straight
         cout << "TURNING TO THE RIGHT" << endl;
         while(cam.getslope() < -.4)
         {
@@ -223,7 +223,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
           cam.update();
           cam.output();
         }
-      }    
+      }
 
       cout << "DRIVING STRAIGHT" << endl;
       roomba.drive(150, STRAIGHT);
@@ -499,7 +499,7 @@ bool Navigation::getPathIsBlocked()
 bool Navigation::_getPathIsBlocked()
 {
   double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
-  if (timePassed > 10)
+  if (timePassed > 5 && timePassed < 12)
   {
     cout << "greater ten seconds" << endl;
   }
