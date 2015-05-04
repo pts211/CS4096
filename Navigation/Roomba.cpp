@@ -115,12 +115,12 @@ void Roomba::powerOn()
   delay(500);
   setDTR(1);
   
-  delay(101);
+  delay(250);
   
   write(Opcode::START);
   write(Mode::CONTROL);
   write(Mode::FULL);
-  delay(101);
+  delay(250);
   
   setLED(0, false, 0, 255);
 }

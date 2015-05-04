@@ -88,67 +88,67 @@ TEST(RoombaTest, LED_Others)
   r.setLED(0, false, 0, 0);
 }
 
-// TEST(RoombaTest, Sensors_Packet_ALL)
-// {
-  // cout<<"Ready?"<<endl;
-  // cin.ignore();
-  // /********** TEST **********/
-  // cout<<"Please wait..."<<endl;
+TEST(RoombaTest, Sensors_Packet_ALL)
+{
+  cout<<"Ready?"<<endl;
+  cin.ignore();
+  /********** TEST **********/
+  cout<<"Please wait..."<<endl;
   
-  // Roomba r;
-  // r.start();
-  // r.powerOn();
+  Roomba r;
+  r.start();
+  r.powerOn();
   
-  // cout<<"Ready?"<<endl;
-  // cin.ignore();
-  // r.getSensors(Sensor::ALL);
-  // r.getSensor().print();
-  // delay(1000);
-  // r.getSensors(Sensor::ALL);
-  // r.getSensor().print();
-  // delay(1000);
-  // r.powerOff();
-  // /********** TEST **********/
-  // cout<<"Pass/Fail? ";
-  // getline(cin, ans);
-  // ASSERT_EQ(!(ans=="f"),true);
-// }
+  cout<<"Ready?"<<endl;
+  cin.ignore();
+  r.getSensors(Sensor::ALL);
+  r.getSensor().print();
+  delay(1000);
+  r.getSensors(Sensor::ALL);
+  r.getSensor().print();
+  delay(1000);
+  r.powerOff();
+  /********** TEST **********/
+  cout<<"Pass/Fail? ";
+  getline(cin, ans);
+  ASSERT_EQ(!(ans=="f"),true);
+}
 
-// TEST(RoombaTest, Power_On)
-// {
-  // cout<<"Ready?"<<endl;
-  // if(!AUTO_ADVANCE){ cin.ignore(); }
-  // /********** TEST **********/
+TEST(RoombaTest, Power_On)
+{
+  cout<<"Ready?"<<endl;
+  if(!AUTO_ADVANCE){ cin.ignore(); }
+  /********** TEST **********/
   
-  // Roomba r;
-  // r.start();
+  Roomba r;
+  r.start();
   
-  // r.powerOn();
+  r.powerOn();
   
-  // /********** TEST **********/
+  /********** TEST **********/
   
-  // cout<<"Pass/Fail? ";
-  // AUTO_PASS?(ans=="t"):getline(cin, ans);
-  // ASSERT_EQ(!(ans=="f"),true);
-// }
+  cout<<"Pass/Fail? ";
+  AUTO_PASS?(ans=="t"):getline(cin, ans);
+  ASSERT_EQ(!(ans=="f"),true);
+}
 
-// TEST(RoombaTest, Power_Off)
-// {
-  // cout<<"Ready?"<<endl;
-  // if(!AUTO_ADVANCE){ cin.ignore(); }
-  // /********** TEST **********/
-  // cout<<"Please wait..."<<endl;
+TEST(RoombaTest, Power_Off)
+{
+  cout<<"Ready?"<<endl;
+  if(!AUTO_ADVANCE){ cin.ignore(); }
+  /********** TEST **********/
+  cout<<"Please wait..."<<endl;
   
-  // Roomba r;
-  // r.start();
+  Roomba r;
+  r.start();
   
-  // r.powerOff();
+  r.powerOff();
   
-  // /********** TEST **********/
-  // cout<<"Pass/Fail? ";
-  // AUTO_PASS?(ans=="t"):getline(cin, ans);
-  // ASSERT_EQ(!(ans=="f"),true);
-// }
+  /********** TEST **********/
+  cout<<"Pass/Fail? ";
+  AUTO_PASS?(ans=="t"):getline(cin, ans);
+  ASSERT_EQ(!(ans=="f"),true);
+}
 
 TEST(RoombaTest, Turn_90)
 {
@@ -165,6 +165,8 @@ TEST(RoombaTest, Turn_90)
   delay(DELAY_MS);
   
   r.turn(90);
+  
+  delay(DELAY_MS);
   
   r.powerOff();
   /********** TEST **********/

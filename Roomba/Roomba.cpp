@@ -36,7 +36,8 @@ void Roomba::start()
   // setDTR(0);
   // write(Opcode::START);
   // write(Mode::CONTROL);
-  // write(Mode::MAX);  
+  // write(Mode::MAX);
+  
 }
 
 void Roomba::setBaud(unsigned char baud)
@@ -53,7 +54,7 @@ void Roomba::setMode(unsigned char mode)
   delay(101);
 }
 
-RoombaSensors Roomba::getSensors(int sensor_pkt)
+bool Roomba::getSensors(int sensor_pkt)
 {
   write(Opcode::SENSOR);
   write(sensor_pkt);
@@ -73,26 +74,6 @@ RoombaSensors Roomba::getSensors(int sensor_pkt)
       read(10); //I didn't feel like making constants.
     break;
   }
-  return sensors;
-}
-
-bool Roomba::turn(int degrees)
-{
-  
-  int dir = (degrees < 0)?-1:1;
-  const int GOAL = abs(degrees);
-  double total_turned = 0;
-  
-  int speed = 100;
-  
-  getSensors(Sensor::PHYSICAL);
-  drive(speed,dir);
-  while( total_turned < GOAL )
-  {
-    total_turned += getSensors(Sensor::PHYSICAL).getAngle();
-    cout<<"Total turned: "<<total_turned<<endl;
-  }
-  drive(0, 0);
   
   return true;
 }
@@ -134,12 +115,12 @@ void Roomba::powerOn()
   delay(500);
   setDTR(1);
   
-  delay(101);
+  delay(250);
   
   write(Opcode::START);
   write(Mode::CONTROL);
   write(Mode::FULL);
-  delay(101);
+  delay(250);
   
   setLED(0, false, 0, 255);
 }
@@ -175,12 +156,8 @@ void Roomba::read(int numBytes)
   }
   */
   //cout<<"LOOP FINISHED"<<endl;
-  int pkt_code = 0;
-  if(numBytes == 26) { pkt_code = 0; }
-  else if(numBytes == 10) { pkt_code = 1; }
-  else if(numBytes == 6) { pkt_code = 2; }
   
-  sensors.parseSensorData(pkt_code, rec);
+  sensors.parseSensorData(0, rec);
 }
 
 void Roomba::setFTDIBaud(unsigned int baud)

@@ -11,16 +11,16 @@ int main(int argc, char const *argv[])
   // Navigation defaultNav(testMode);
   if(testMode)
     cout << "Test Mode enabled" << endl;
-  Navigation realNav("BasementFactory.txt", testMode);
+  //Navigation realNav("BasementFactory.txt", testMode);
   // cout << "Power: "
   // defaultNav.inputNodes("BasementFactory.txt");
   // defaultNav.walkToStartingNode();
 
-    // Roomba r;
-    // r.start();
-    // r.powerOn();
-    // r.drive(0,0);
-    // r.powerOff();
+    Roomba r;
+    r.start();
+    //r.powerOn();
+    r.drive(0,0);
+    r.powerOff();
 
   return 0;
 }
