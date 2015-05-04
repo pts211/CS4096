@@ -18,11 +18,11 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 	double dWidth = cap.get(CV_CAP_PROP_FRAME_WIDTH); //get the width of frames of the video
 	double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT); //get the height of frames of the video
 
-	int x_length = 200;
-	int y_length = 200;
+	int x_length = 310;
+	int y_length = 400;
 
 	int center_x = dWidth/2;
-	int offset = 50;
+	int offset = 1;
 
 	double** plot;
 	plot = new double *[x_length];
@@ -339,6 +339,7 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 
 	e_slope = left_slope + right_slope;
 	c_slope = cleft_slope + cright_slope;
+	// c_slope++;
 
 
 	 
@@ -358,21 +359,21 @@ void camera::update(int EDGE_NUM,int B_MIN,int G_MAX,int R_MAX)
 void camera::output()
 {
     
-  	namedWindow("Input",0); //create a window called "MyVideo"
-  	imshow("Input", input); //show the frame in "MyVideo" window
+  	// namedWindow("Input",0); //create a window called "MyVideo"
+  	// imshow("Input", input); //show the frame in "MyVideo" window
    
-    namedWindow("Edges",0);
-    imshow("Edges", edges);
+   //  namedWindow("Edges",0);
+   //  imshow("Edges", edges);
     
-    namedWindow("Color",0);
-    imshow("Color",img); 
+   //  namedWindow("Color",0);
+   //  imshow("Color",img); 
     
    
-  	if (waitKey(1) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-  	{
-  		cout << "esc key is pressed by user" << endl;
-      exit(1);
-  	}
+  	// if (waitKey(1) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+  	// {
+  	// 	cout << "esc key is pressed by user" << endl;
+   //    exit(1);
+  	// }
   
   	cout << "[ " << pathisblocked << ", " << floorsign << ", " << e_slope << ", " << c_slope << " ]" << endl;
   

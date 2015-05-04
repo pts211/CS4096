@@ -1,6 +1,7 @@
 #include "Navigation.h"
 #include <fstream>
 #include <queue>
+#include <math.h>
 // #include <iostream>
 // #include <string>
 // #include <cstring>
@@ -10,6 +11,11 @@ using namespace std;
 
 double Node::DNE = 1000000.0;
 double Node::LARGE_NUM = 1000.0;
+const int edge = 80;
+const int red = 110;
+const int green = 110;
+const int blue = 170;
+const int STRAIGHT = 32768;
 
 Navigation::Navigation(const char* filename)
 {
@@ -36,17 +42,20 @@ void Navigation::inputNodes(const char* filename)
   if(in.good()){ //if the file was successfully opened
     in >> inStr; //read the number of nodes
     numNodes = atoi(inStr.c_str()); //change the string we read to an int
-    for(int i = 0; i < numNodes; i++){ //loop for each node we have
+    for(int i = 0; i < numNodes; i++)
+    { //loop for each node we have
       in >> inStr; //read the name of a node
       Node n(inStr, Node::DNE); //create a new node with nonexistant g value
-          n.parent = NULL;
+      n.parent = NULL;
       allNodes.push_back(n); //put that node in the list of all nodes
     }
 
-    for(int i = 0; i < numNodes; i++){ //loop for each node we have
+    for(int i = 0; i < numNodes; i++)
+    { //loop for each node we have
       in >> inStr; //read the number of neighbors a node has
       numNeighbors = atoi(inStr.c_str());
-      for(int j = 0; j < numNeighbors; j++) { //loop for each neighbor of a node
+      for(int j = 0; j < numNeighbors; j++)
+      { //loop for each neighbor of a node
         in >> inStr;
         neighbor = atoi(inStr.c_str()); //read the nodes neighbor
         in >> inStr;
@@ -57,7 +66,8 @@ void Navigation::inputNodes(const char* filename)
         allNodes[i].neighbors.push_back(&allNodes[neighbor]); //store the node in the list of neighbors
         // in >> inStr; //read the neighbors weight
         allNodes[i].weights.push_back(weight); //assign the weight
-        switch(direction) { //assign the direction we need to go in to reach the neighbor
+        switch(direction)
+        { //assign the direction we need to go in to reach the neighbor
           case 1:
             allNodes[i].allDirections.push_back(NORTH);
             break;
@@ -90,12 +100,12 @@ Node* Navigation::getNode(int index)
   return &allNodes[index];
 }
 
-vector<Node*> Navigation::dbgReconstructPath(Node* current)
+vector<Node*> Navigation::dbgReconstructPath(Node* source, Node* sink)
 {
   vector<Node*> path;
 
   #ifdef TEST
-    return reconstructPath(current);
+    return reconstructPath(source, sink);
   #else
     cout << "This function is only for testing." << endl;   
   #endif
@@ -116,74 +126,115 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
   return path;
 }
 
-void Navigation::rotate(int degrees) {
+void Navigation::rotate(int degrees)
+{
   int degreesRotated = 0;
-  int16_t speed = 250;
+  int16_t speed = 50;
   int16_t direction = -1;
 
-  roomba.getSensors(Sensor::ALL).getAngle();
-    if(degrees < 0) {
-        roomba.drive(speed, direction);
-        while((degreesRotated > degrees - 5) || (degreesRotated < degrees + 5)) {
-            usleep(10);
-            degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
-        }    
-    } else {
-        roomba.drive(250, 1);
-        while((degreesRotated < degrees - 5) || (degreesRotated > degrees + 5)) {
-            usleep(10);
-            degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
-        }
+  // roomba.getSensors(Sensor::ALL).getAngle();
+  roomba.drive(0,0);
+  sensor.getAngle();
+  if(degrees < 0)
+  {
+    roomba.drive(speed, direction);
+    while((degreesRotated > degrees - 1) || (degreesRotated < degrees + 1))
+    {
+      usleep(100);
+      // degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
+      degreesRotated -= sensor.getAngle();
+    }    
+  }
+  else
+  {
+    roomba.drive(speed, 1);
+    while((degreesRotated < degrees - 1) || (degreesRotated > degrees + 1))
+    {
+      usleep(100);
+      // degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
+      cout << "Degrees rotated: " << degreesRotated << endl;
+      degreesRotated += sensor.getAngle();
     }
-    roomba.drive(0, 0);    
+  }
+  roomba.drive(0, 0);    
 }
 
 Node* Navigation::walkToStartingNode()
 {
-  while(1) {
+  while(1)
+  {
+    cam.output();
+    sleep(2);
     moveForwardUntilSignOrBlockage();
-    if(!cam->getfloorsign().empty()) {
-      for(int i = 0; i < allNodes.size() - 1; i++) {
-        if(cam->getfloorsign() == allNodes[i].name) {
+    if(!getFloorSign().empty())
+      for(int i = 0; i < allNodes.size() - 1; i++)
+        if(getFloorSign() == allNodes[i].name)
           return &allNodes[i];
-        }
-      }
-    }
 
-    if(cam->getpathisblocked()) {    
-      rotate(180);
+    if(getPathIsBlocked())
+    {    
+      // rotate(180);
     }  
   }
 }
 
 void Navigation::moveForwardUntilSignOrBlockage()
 {
-  roomba.drive(250, 0); //                              is drive temporary or constant until you drive(0, 0)???????
-  while(cam->getfloorsign().empty() && !cam->getpathisblocked())
+  roomba.getSensors(Sensor::ALL);
+  cout << "Percent Power: " << (float)roomba.getSensor().getCharge() / (float)roomba.getSensor().getCapacity() << endl;
+  cout << "moveForwardUntilSignOrBlockage" << endl;
+  roomba.drive(150, STRAIGHT);
+  cout << "start cam check loop" << endl;
+  while(getFloorSign().empty() && !getPathIsBlocked())
   {
-    cam->update(80, 80, 80, 80);
-    if(cam->getc_slope() > 5) { //arbitrary tolerances. slope will be 0 if we are going straight      
-      while(cam->getc_slope() > 2) {
-        // roomba.drive(250, -10); //arbitrary radius, change later
-        rotate(-5);
-        cam->update(80, 80, 80, 80);
-      }
-    } else if(cam->getc_slope() < -5) {
-      while(cam->getc_slope() < -2) {
-        // roomba.drive(250, 10);
-        rotate(5);
-        cam->update(80, 80, 80, 80);
-      }
+    cout << "about to update" << endl;
+    cam.update(edge, blue, green, red);
+    cam.output();
+    cout << "updated" << endl;
+
+    if((cam.getc_slope() != cam.getc_slope()))
+    {
+      roomba.drive(0,0);
+      cout << "NAN" << endl;
     }
-    roomba.drive(250,0);
+    else
+    {
+      if(cam.getc_slope() < -.7 && !(cam.getc_slope() != cam.getc_slope()))
+      { //arbitrary tolerances. slope will be 0 if we are going straight      
+        cout << "too far to the right" << endl;
+        while(cam.getc_slope() < -.3)
+        {
+          roomba.drive(200, 1500); //arbitrary radius, change later
+          // rotate(5);
+          cam.update(edge, blue, green, red);
+          cam.output();
+        }
+      }
+      else if(cam.getc_slope() > .7 && !(cam.getc_slope() != cam.getc_slope()))
+      {
+        cout << "too far to the left" << endl;
+        while(cam.getc_slope() > -.3 )
+        {
+          roomba.drive(200, -1500);
+          // rotate(-5);
+          cam.update(edge, blue, green, red);
+          cam.output();
+        }
+      }    
+    
+      roomba.drive(150, STRAIGHT);
+    }
   }
-  if(!cam->getfloorsign().empty())
+  if(!getFloorSign().empty())
   {
+    cout << "got a floor sign" << endl;
     //move forward just a bit more so we're on top of it.
-    while(!cam->getfloorsign().empty()) {
-        roomba.drive(100, 0); //temp arbitrary numbers
+    while(!getFloorSign().empty()) 
+    {
+      roomba.drive(150, STRAIGHT); //temp arbitrary numbers
     }
   }
+  cout << "end moveForwardUntilSignOrBlockage" << endl;
 }
 
 bool Navigation::walkPath(vector<Node*> path)
@@ -197,44 +248,48 @@ bool Navigation::walkPath(vector<Node*> path)
   for(size_t i=1; i<path.size(); ++i)
   {
     string nodeGoal = path[i]->name;
-    while(!arrived) //is this loop actually doing anything? i.e. does it always only run once?
+    while(!arrived)
     {
       moveForwardUntilSignOrBlockage();
-      if(cam->getpathisblocked())
-        {
-          cout << "Path is blocked. Turning around." << endl;
+      if(getPathIsBlocked())
+      {
+        cout << "Path is blocked. Turning around." << endl;
         rotate(180); //turn around        
         //move towards last intersection
-          moveForwardUntilSignOrBlockage();                //ASSUMING NO BLOCKAGE HERE
+        moveForwardUntilSignOrBlockage();                //ASSUMING NO BLOCKAGE HERE
 
         //update weights where blockage exists
-          incrementWeight(path[i-1], path[i]);
+        incrementWeight(path[i-1], path[i]);
 
           //we turned around, so switch direction we traveled
-          switch(path[i]->directionTraveled) {
-            case NORTH:
-              path[i-1]->directionTraveled = SOUTH;
-              break;
-            case SOUTH:
-              path[i-1]->directionTraveled = NORTH;
-              break;
-            case EAST:
-              path[i-1]->directionTraveled = WEST;
-              break;
-            case WEST:
-              path[i-1]->directionTraveled = EAST;
-              break;
-          }
+        switch(path[i]->directionTraveled)
+        {
+          case NORTH:
+            path[i-1]->directionTraveled = SOUTH;
+            break;
+          case SOUTH:
+            path[i-1]->directionTraveled = NORTH;
+            break;
+          case EAST:
+            path[i-1]->directionTraveled = WEST;
+            break;
+          case WEST:
+            path[i-1]->directionTraveled = EAST;
+            break;
+        }
 
         path = findPath(path[i-1], path[path.size()-1]);
         turnAtIntersection(path, 0);
-          return walkPath(path);
+        return walkPath(path);
       }
-        else if(!cam->getfloorsign().empty())
+      else if(!getFloorSign().empty())
+      {
+        if(getFloorSign() == path[path.size()-1]->name)
         {
-          if(cam->getfloorsign() == path[path.size()-1]->name) {
           arrived = true;
-        } else {
+        }
+        else
+        {
           turnAtIntersection(path, i);
         }
       }
@@ -246,9 +301,11 @@ bool Navigation::walkPath(vector<Node*> path)
 
 void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
 
-  switch(path[currentNode]->directionTraveled) {
-    case NORTH:      
-      switch(path[currentNode+1]->directionTraveled) {
+  switch(path[currentNode]->directionTraveled)
+  {
+    case NORTH:
+      switch(path[currentNode+1]->directionTraveled)
+      {
         case NORTH:          
           break;
         case SOUTH:
@@ -263,7 +320,8 @@ void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
       }
       break;
     case SOUTH:
-      switch(path[currentNode+1]->directionTraveled) {
+      switch(path[currentNode+1]->directionTraveled)
+      {
         case NORTH:
           rotate(180);
           break;
@@ -278,7 +336,8 @@ void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
       }
       break;
     case EAST:
-      switch(path[currentNode+1]->directionTraveled) {
+      switch(path[currentNode+1]->directionTraveled)
+      {
         case NORTH:
           rotate(90);
           break;
@@ -293,7 +352,8 @@ void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
       }
       break;
     case WEST:
-      switch(path[currentNode+1]->directionTraveled) {
+      switch(path[currentNode+1]->directionTraveled)
+      {
         case NORTH:
           rotate(-90);
           break;
@@ -392,6 +452,61 @@ void Navigation::incrementWeight(Node* n1, Node* n2)
     }
   }
 }
+
+string Navigation::getFloorSign()
+{
+  if(testMode)
+  {
+    return _getFloorSign();
+  }
+  else
+  {
+    return cam.getfloorsign(); 
+  }
+}
+
+string Navigation::_getFloorSign()
+{
+  string x = "";
+  double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
+  if (timePassed > 10)
+  {
+    cout << "greater ten seconds" << endl;
+  }
+  else
+  {
+    cout << "less than ten seconds" << endl;
+  }
+  return x;
+}
+
+bool Navigation::getPathIsBlocked()
+{
+  if(testMode)
+  {
+    return _getPathIsBlocked();
+  }
+  else
+  {
+    return cam.getpathisblocked();
+  }
+}
+
+bool Navigation::_getPathIsBlocked()
+{
+  double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
+  if (timePassed > 10)
+  {
+    cout << "greater ten seconds" << endl;
+  }
+  else
+  {
+    cout << "less than ten seconds" << endl;
+  }
+  return false;
+}
+
+
 
 void Navigation::outputPath(const vector<Node*>& path)
 {

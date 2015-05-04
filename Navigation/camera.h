@@ -65,8 +65,4 @@ public:
 
 };//end class camera
 
-
-#include "camera.hpp"
-
-
 #endif

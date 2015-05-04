@@ -14,7 +14,7 @@
 #include "RoombaSensors.h"
 
 using namespace std;
-void delay( unsigned long ms );
+//void delay( unsigned long ms );
 
 /* -------------------- MY ROOMBA -------------------- */
 /*
@@ -134,7 +134,7 @@ class Roomba
     
     void powerOff();
     
-    //void delay(unsigned int howLong);
+    void delay(unsigned int howLong);
     
     void write(unsigned char cmd);
     void read(int numBytes);

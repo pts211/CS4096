@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <utility>
+#include "time.h"
 using namespace std;
 
 enum CardinalDirections {NORTH, SOUTH, EAST, WEST};
@@ -32,7 +33,7 @@ struct Node
 class Navigation
 {
 public:
-	Navigation() {};
+	Navigation(bool test) {roomba.start(); roomba.powerOn(); roomba.getSensors(Sensor::ALL); startTime = clock(); testMode = test;}
 	Navigation(const char* filename);
 	void inputNodes(const char* filename);
 	bool travelFromSourceToSink(Node* source, Node* sink);
@@ -40,7 +41,7 @@ public:
 	Node* getNode(int index);
 
 	//Used to test private functions
-	vector<Node*> dbgReconstructPath(Node* current);
+	vector<Node*> dbgReconstructPath(Node* source, Node* sink);
 	vector<Node*> dbgFindPath(Node* source, Node* sink);
 
 private:
@@ -53,11 +54,17 @@ private:
 	void outputAllNodes();
 	void turnAtIntersection(vector<Node*> path, int currentNode);
 	void rotate(int degrees);
+	string getFloorSign();
+	string _getFloorSign();
+	bool getPathIsBlocked();
+	bool _getPathIsBlocked();
 	vector<Node> allNodes;
 	int numNodes;
-	camera *cam;
+	camera cam;
 	Roomba roomba;
-	// RoombaSensors sensor;
+	RoombaSensors sensor;
+	clock_t startTime;
+	bool testMode;
 };
 
 #endif

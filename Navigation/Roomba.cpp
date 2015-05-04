@@ -115,7 +115,7 @@ void Roomba::powerOn()
   delay(500);
   setDTR(1);
   
-  delay(50);
+  delay(101);
   
   write(Opcode::START);
   write(Mode::CONTROL);
@@ -137,7 +137,7 @@ void Roomba::write(unsigned char cmd)
   //int iCMD = cmd;
   //cout<<iCMD<<endl;
   ftdi_write_data(ftdi, &cmd, 1);
-  delay(1);
+  delay(101);
 }
 
 void Roomba::read(int numBytes)
@@ -206,7 +206,7 @@ void Roomba::sleep(unsigned int mseconds)
 }
 */
 
-/*
+
 void Roomba::delay(unsigned int howLong)
 {
   struct timespec sleeper ;
@@ -222,7 +222,7 @@ void Roomba::delay(unsigned int howLong)
     nanosleep (&sleeper, NULL) ;
   }
 }
-*/
+
 
 /*
 // Resets the 
