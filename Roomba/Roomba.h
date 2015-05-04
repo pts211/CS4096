@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 #include <iostream>
 #include <string.h>
 #include <bitset>
@@ -122,6 +123,7 @@ class Roomba
     //bool getSensors(int sensor_pkt);
     RoombaSensors getSensors(int sensor_pkt);
     
+    bool turn(int degrees);
     // Velocity: -500 <> 500 mm/s
     // Radius:   -2000 <> 2000 mm/s
     // Straight = 32768

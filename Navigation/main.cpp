@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
   	  testMode = true;
   // Navigation defaultNav(testMode);
 
-  Navigation realNav("BasementFactory", testMode);
+  Navigation realNav("BasementFactory.txt", testMode);
   // cout << "Power: "
   // defaultNav.inputNodes("BasementFactory.txt");
   // defaultNav.walkToStartingNode();
