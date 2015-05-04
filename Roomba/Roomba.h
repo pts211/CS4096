@@ -119,7 +119,8 @@ class Roomba
     
     void setMode(unsigned char mode);
     
-    bool getSensors(int sensor_pkt);
+    //bool getSensors(int sensor_pkt);
+    RoombaSensors getSensors(int sensor_pkt);
     
     // Velocity: -500 <> 500 mm/s
     // Radius:   -2000 <> 2000 mm/s

@@ -150,6 +150,53 @@ TEST(RoombaTest, Power_Off)
   ASSERT_EQ(!(ans=="f"),true);
 }
 
+TEST(RoombaTest, Turn_90)
+{
+  cout<<"Ready?"<<endl;
+  if(!AUTO_ADVANCE){ cin.ignore(); }
+  /********** TEST **********/
+  cout<<"Please wait..."<<endl;
+  
+  Roomba r;
+  r.start();
+  r.powerOn();
+  
+  //r.write(131);
+  delay(DELAY_MS);
+  
+  r.turn(90);
+  
+  r.powerOff();
+  /********** TEST **********/
+  cout<<"Pass/Fail? ";
+  AUTO_PASS?(ans=="t"):getline(cin, ans);
+  ASSERT_EQ(!(ans=="f"),true);
+}
+
+TEST(RoombaTest, Turn_-90)
+{
+  cout<<"Ready?"<<endl;
+  if(!AUTO_ADVANCE){ cin.ignore(); }
+  /********** TEST **********/
+  cout<<"Please wait..."<<endl;
+  
+  Roomba r;
+  r.start();
+  r.powerOn();
+  
+  //r.write(131);
+  delay(DELAY_MS);
+  
+  r.turn(-90);
+  
+  r.powerOff();
+  /********** TEST **********/
+  cout<<"Pass/Fail? ";
+  AUTO_PASS?(ans=="t"):getline(cin, ans);
+  ASSERT_EQ(!(ans=="f"),true);
+}
+
+
 TEST(RoombaTest, Drive_BWD)
 {
   cout<<"Ready?"<<endl;
