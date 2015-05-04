@@ -53,7 +53,7 @@ void Roomba::setMode(unsigned char mode)
   delay(101);
 }
 
-bool Roomba::getSensors(int sensor_pkt)
+RoombaSensors Roomba::getSensors(int sensor_pkt)
 {
   write(Opcode::SENSOR);
   write(sensor_pkt);
@@ -73,28 +73,28 @@ bool Roomba::getSensors(int sensor_pkt)
       read(10); //I didn't feel like making constants.
     break;
   }
-  
-  return true;
+  return sensors;
 }
 
-void Roomba::turn(int degrees)
+bool Roomba::turn(int degrees)
 {
   
   int dir = (degrees < 0)?-1:1;
-  const int GOAL = math.abs(degrees);
+  const int GOAL = abs(degrees);
   double total_turned = 0;
   
   int speed = 100;
   
-  if( !getSensors(SENSORS::PHYSICAL) ) {
-    cout<<"Logic is literally broken."<<endl;
-  }
+  getSensors(Sensor::PHYSICAL);
   drive(speed,dir);
-  while( total_turned < degrees )
+  while( total_turned < GOAL )
   {
-    total_turned += getSensors(SENSORS::PHYSICAL).getAngle();
+    total_turned += getSensors(Sensor::PHYSICAL).getAngle();
+    cout<<"Total turned: "<<total_turned<<endl;
   }
   drive(0, 0);
+  
+  return true;
 }
 
 void Roomba::drive(int16_t velocity, int16_t radius)

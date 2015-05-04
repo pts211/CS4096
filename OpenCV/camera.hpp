@@ -88,11 +88,19 @@ void camera::update(int P_NUM,int B_MIN,int G_MAX,int R_MAX,int L_NUM)
       plot[plot_length][1] = dWidth-1 - x_center;
       plot_length++;
       
-      Vec3b &intensity = img.at<Vec3b>(y,x_center);
-      
-      intensity.val[0] = 0; 
-      intensity.val[1] = 0;
-      intensity.val[2] = 255; //RED      
+      for(int j=0;j<3;j++)
+      {
+        for(int k=0; k<3; k++)
+       {
+        if(y+j>=0 && x_center+k>0 && y+j<dHeight && x_center+k<dWidth)
+       
+         Vec3b &intensity = img.at<Vec3b>(y+j,x_center+k);
+         
+         intensity.val[0] = 0; 
+         intensity.val[1] = 0;
+         intensity.val[2] = 255; //RED   
+       }
+      }   
        
     }    
 	}		 

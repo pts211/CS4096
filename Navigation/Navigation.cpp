@@ -20,7 +20,7 @@ const int STRAIGHT = 32768;
 Navigation::Navigation(const char* filename, bool test)
 {
   testMode = test;
-  inputNodes(filename); //forgot what your format was clayton and don't want to deal with it too much
+  inputNodes(filename);
   if(allNodes.size() > 1) //keep in mind, the output path doesn't include the source
   {
     cout << "from " << allNodes[0].name << " to " << allNodes[allNodes.size()-1].name << endl;
@@ -41,8 +41,10 @@ void Navigation::inputNodes(const char* filename)
   in.open(filename);
 
   if(in.good()){ //if the file was successfully opened
+    cout << "is good" << endl;
     in >> inStr; //read the number of nodes
     numNodes = atoi(inStr.c_str()); //change the string we read to an int
+    cout << "num nodes " << numNodes << endl;
     for(int i = 0; i < numNodes; i++)
     { //loop for each node we have
       in >> inStr; //read the name of a node
@@ -85,15 +87,6 @@ void Navigation::inputNodes(const char* filename)
       }
     }
   }
-
-  for(int i = 0; i < numNodes; i++) {
-    cout << "Node: " << allNodes[i].name << endl;
-    cout << "Neighbors: ";
-    for(int j = 0; j < numNeighbors; j++) {
-        cout << allNodes[i].neighbors[j].name << " , " << endl;
-    }  
-  }
-  cout << "Finished inputing nodes" << endl;
 }
 
 bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
@@ -262,6 +255,7 @@ bool Navigation::walkPath(vector<Node*> path)
     string nodeGoal = path[i]->name;
     while(!arrived)
     {
+      cout << "about to move forward" << endl;
       moveForwardUntilSignOrBlockage();
       if(getPathIsBlocked())
       {
@@ -384,7 +378,7 @@ void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
 
 vector<Node*> Navigation::findPath(Node* source, Node* sink)
 {
-  //cout << "findPath" << endl;
+  cout << "findPath" << endl;
   for(size_t i=0; i<allNodes.size(); ++i)
   {
     allNodes[i].g_score = Node::DNE;
@@ -428,7 +422,7 @@ vector<Node*> Navigation::findPath(Node* source, Node* sink)
       }
     }
   }
-
+  cout << "find path returning" << endl;
   return reconstructPath(source, sink);
 }
 
@@ -442,6 +436,7 @@ vector<Node*> Navigation::reconstructPath(Node* source, Node* sink)
     current = current->parent;
   }
   path.insert(path.begin(), source);
+  cout << "reconstructPath returning" << endl;
   return path;
 }
 
