@@ -479,17 +479,15 @@ string Navigation::getFloorSign()
 
 string Navigation::_getFloorSign()
 {
-  string x = "";
   double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
-  if (timePassed > 10)
+  if (timePassed < 10)
   {
-    cout << "greater ten seconds" << endl;
+    return "";
   }
-  else
+  else if (timePassed < 11)
   {
-    cout << "less than ten seconds" << endl;
+    return "A";
   }
-  return x;
 }
 
 bool Navigation::getPathIsBlocked()
@@ -507,15 +505,18 @@ bool Navigation::getPathIsBlocked()
 bool Navigation::_getPathIsBlocked()
 {
   double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
-  if (timePassed > 5 && timePassed < 12)
+  if (timePassed < 10)
   {
-    cout << "greater ten seconds" << endl;
+    return false;
+  }
+  else if (timePassed < 11)
+  {
+    return true;
   }
   else
   {
-    cout << "less than ten seconds" << endl;
+    return false;
   }
-  return false;
 }
 
 
