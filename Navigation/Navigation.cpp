@@ -85,6 +85,14 @@ void Navigation::inputNodes(const char* filename)
       }
     }
   }
+
+  for(int i = 0; i < numNodes; i++) {
+    cout << "Node: " << allNodes[i].name << endl;
+    cout << "Neighbors: ";
+    for(int j = 0; j < numNeighbors; j++) {
+        cout << allNodes[i].neighbors[j].name << " , " << endl;
+    }  
+  }
   cout << "Finished inputing nodes" << endl;
 }
 

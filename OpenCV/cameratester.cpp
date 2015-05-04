@@ -54,11 +54,11 @@ void createTrackbars()
 {
 	//create window for trackbars
  
-	namedWindow(trackbarWindowName1,1);
-  namedWindow(trackbarWindowName2,1);
-  namedWindow(trackbarWindowName3,1);
-  namedWindow(trackbarWindowName4,1);
-  namedWindow(trackbarWindowName5,1);
+	namedWindow(trackbarWindowName1,2);
+  namedWindow(trackbarWindowName2,2);
+  namedWindow(trackbarWindowName3,2);
+  namedWindow(trackbarWindowName4,2);
+  namedWindow(trackbarWindowName5,2);
 
 	char TrackbarName1[50];
   char TrackbarName2[50];
