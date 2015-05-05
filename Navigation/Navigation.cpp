@@ -16,6 +16,8 @@ double Node::LARGE_NUM = 1000.0;
 // const int green = 110;
 // const int blue = 170;
 const int STRAIGHT = 32768;
+const int REG_SPEED = 200;
+const int TURN_SPEED = 150;
 
 Navigation::Navigation(const char* filename, bool test)
 {
@@ -138,32 +140,40 @@ vector<Node*> Navigation::dbgFindPath(Node* source, Node* sink)
 
 void Navigation::rotate(int degrees)
 {
-  int degreesRotated = 0;
+  double degreesRotated = 0;
   int16_t speed = 50;
-  int16_t direction = -1;
 
   // roomba.getSensors(Sensor::ALL).getAngle();
+  cout << "TURNING " << degrees << " DEGREES" << endl;
+  cout << "\t\t\t\t\tSTOP DRIVE" << endl;
   roomba.drive(0,0);
-  sensor.getAngle();
+  // roomba.getSensors(Sensor::ALL);
+  roomba.getSensor().getAngle();  
   if(degrees < 0)
   {
-    roomba.drive(speed, direction);
-    while((degreesRotated > degrees - 1) || (degreesRotated < degrees + 1))
+    roomba.drive(speed, -1);
+    while(degreesRotated > degrees)// - 5) || (degreesRotated < degrees + 5))
     {
-      usleep(100);
       // degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
-      degreesRotated -= sensor.getAngle();
+      if(roomba.getSensors(Sensor::ALL)) {
+        degreesRotated += roomba.getSensor().getAngle();
+        cout << "Degrees Rotated: " << degreesRotated << endl;
+        cout << "getAngle: " << roomba.getSensor().getAngle();
+        sleep(1);
+      }
     }    
   }
   else
   {
     roomba.drive(speed, 1);
-    while((degreesRotated < degrees - 1) || (degreesRotated > degrees + 1))
+    while(degreesRotated < degrees)// || (degreesRotated > degrees + 5))
     {
-      usleep(100);
       // degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
-      cout << "Degrees rotated: " << degreesRotated << endl;
-      degreesRotated += sensor.getAngle();
+      if(roomba.getSensors(Sensor::ALL)) {
+        cout << "Degrees Rotated: " << degreesRotated << endl;
+        degreesRotated -= roomba.getSensor().getAngle();
+        sleep(1);
+      }
     }
   }
   roomba.drive(0, 0);    
@@ -190,21 +200,23 @@ Node* Navigation::walkToStartingNode()
 
 void Navigation::moveForwardUntilSignOrBlockage()
 {
-  roomba.getSensors(Sensor::ALL);
+  // roomba.getSensors(Sensor::ALL);
   cout << "Percent Power: " << (float)roomba.getSensor().getCharge() / (float)roomba.getSensor().getCapacity() << endl;
   cout << "moveForwardUntilSignOrBlockage" << endl;
-  roomba.drive(150, STRAIGHT);
+  cout << "\t\t\t\t\tDRIVING STRAIGHT" << endl;
+  roomba.drive(REG_SPEED, STRAIGHT);
   // cout << "start cam check loop" << endl;
   while(getFloorSign().empty() && !getPathIsBlocked())
   {
     // cout << "about to update" << endl;
     cam.update();
-    cam.output();
-    //cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
+    //cam.output();
+    cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
     // cout << "updated" << endl;
 
     if((cam.getslope() != cam.getslope())) //if the value is NaN
     {
+      cout << "\t\t\t\t\tSTOP DRIVE" << endl;
       roomba.drive(0,0);
       // cout << "NAN" << endl;
     }
@@ -212,39 +224,46 @@ void Navigation::moveForwardUntilSignOrBlockage()
     {
       if(cam.getslope() < -.4)
       { //arbitrary tolerances. slope will be 0 if we are going straight
-        cout << "TURNING TO THE RIGHT" << endl;
-        roomba.drive(200, -1500); //arbitrary radius, change later
-        while(cam.getslope() < -.1)
+        cout << "\t\t\t\t\tTURNING TO THE RIGHT" << endl;
+        roomba.drive(TURN_SPEED, -1500);
+        while(cam.getslope() < -.1 && cam.getfloorsign().empty())
         {
           // rotate(5);
           cam.update();
-          cam.output();
+          //cam.output();
+          cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
         }
+        cout << "\t\t\t\t\tDRIVING STRAIGHT" << endl;
+        roomba.drive(REG_SPEED, STRAIGHT);
       }
       else if(cam.getslope() > .4)
       {
-        cout << "TURNING TO THE LEFT" << endl;
-        roomba.drive(200, 1500);
-        while(cam.getslope() > .1 )
+        cout << "\t\t\t\t\tTURNING TO THE LEFT" << endl;
+        roomba.drive(TURN_SPEED, 1500);
+        while(cam.getslope() > .1 && cam.getfloorsign().empty())
         {
           // rotate(-5);
           cam.update();
-          cam.output();
+          //cam.output();
+          cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
         }
+        cout << "\t\t\t\t\tDRIVING STRAIGHT" << endl;
+        roomba.drive(REG_SPEED, STRAIGHT);
       }
 
-      cout << "DRIVING STRAIGHT" << endl;
-      roomba.drive(150, STRAIGHT);
     }
   }
   if(!getFloorSign().empty())
   {
     cout << "got a floor sign" << endl;
     //move forward just a bit more so we're on top of it.
-    while(!getFloorSign().empty()) 
-    {
-      roomba.drive(150, STRAIGHT); //temp arbitrary numbers
-    }
+    cout << "\t\t\t\t\tDRIVING STRAIGHT" << endl;
+    roomba.drive(REG_SPEED, STRAIGHT); //temp arbitrary numbers
+    // while(!getFloorSign().empty()) 
+    // {
+    //   cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
+    // }
+    sleep(2);
   }
   cout << "end moveForwardUntilSignOrBlockage" << endl;
 }
@@ -309,8 +328,9 @@ void Navigation::walkPath(vector<Node*> path)
   }
 }
 
-void Navigation::turnAtIntersection(vector<Node*> path, int currentNode) {
-
+void Navigation::turnAtIntersection(vector<Node*> path, int currentNode)
+{
+  cout << "turnAtIntersection" << endl;
   switch(path[currentNode]->directionTraveled)
   {
     case NORTH:
@@ -479,14 +499,15 @@ string Navigation::getFloorSign()
 string Navigation::_getFloorSign()
 {
   double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
-  if (timePassed < 10)
+  if (timePassed < 12)
   {
     return "";
   }
-  else if (timePassed < 11)
+  else if (timePassed < 14)
   {
     return "A";
   }
+  return "";
 }
 
 bool Navigation::getPathIsBlocked()
@@ -508,7 +529,7 @@ bool Navigation::_getPathIsBlocked()
   {
     return false;
   }
-  else if (timePassed < 11)
+  else if (timePassed < 12)
   {
     return false;
   }
@@ -516,6 +537,7 @@ bool Navigation::_getPathIsBlocked()
   {
     return false;
   }
+  return false;
 }
 
 
