@@ -1,4 +1,4 @@
-//camera.h
+//camera.h IN /OPENCV
 
 #ifndef CAMERA_H
 #define CAMERA_H
@@ -35,7 +35,7 @@ class camera
   
   	camera(): cap(0), intercept(0), slope(0), pathisblocked(false), floorsign("") {};
   
-  	~camera() {};
+  	~camera() {cap.release();}
   
   	//MUTATOR
   

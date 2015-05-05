@@ -152,27 +152,27 @@ void Navigation::rotate(int degrees)
   if(degrees < 0)
   {
     roomba.drive(speed, -1);
-    while(degreesRotated > degrees)// - 5) || (degreesRotated < degrees + 5))
+    while((degreesRotated > degrees + 5) || (degreesRotated < degrees - 5))
     {
       // degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
       if(roomba.getSensors(Sensor::ALL)) {
         degreesRotated += roomba.getSensor().getAngle();
         cout << "Degrees Rotated: " << degreesRotated << endl;
-        cout << "getAngle: " << roomba.getSensor().getAngle();
-        sleep(1);
+        // cout << "getAngle: " << roomba.getSensor().getAngle();
+        usleep(100000);
       }
     }    
   }
   else
   {
     roomba.drive(speed, 1);
-    while(degreesRotated < degrees)// || (degreesRotated > degrees + 5))
+    while((degreesRotated < degrees -5) || (degreesRotated > degrees + 5))
     {
       // degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
       if(roomba.getSensors(Sensor::ALL)) {
         cout << "Degrees Rotated: " << degreesRotated << endl;
         degreesRotated -= roomba.getSensor().getAngle();
-        sleep(1);
+        usleep(100000);
       }
     }
   }
@@ -263,7 +263,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
     // {
     //   cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
     // }
-    sleep(2);
+    sleep(2.5);
   }
   cout << "end moveForwardUntilSignOrBlockage" << endl;
 }

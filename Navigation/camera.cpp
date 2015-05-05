@@ -74,7 +74,7 @@ void camera::update()
         x_total++;
         
       }
-      else if( y>460 && x>310 && x<330 && intensity.val[0] > sign_color && intensity.val[1] > sign_color && intensity.val[2] > sign_color)
+      else if( y>440 && x>300 && x<340 && intensity.val[0] > sign_color && intensity.val[1] > sign_color && intensity.val[2] > sign_color)
       {
          sign_count++;
       

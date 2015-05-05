@@ -62,7 +62,7 @@ void camera::update(int P_NUM,int B_MIN,int G_MAX,int R_MAX,int L_NUM)
         x_total++;
         
       }
-      else if( y>460 && x>310 && x<330 && intensity.val[0] > sign_color && intensity.val[1] > sign_color && intensity.val[2] > sign_color)
+      else if( y>440 && x>300 && x<340 && intensity.val[0] > sign_color && intensity.val[1] > sign_color && intensity.val[2] > sign_color)
       {
          sign_count++;
       
@@ -88,9 +88,9 @@ void camera::update(int P_NUM,int B_MIN,int G_MAX,int R_MAX,int L_NUM)
       plot[plot_length][1] = dWidth-1 - x_center;
       plot_length++;
       
-      for(int j=-1;j<=1;j++)
+      for(int j=-2;j<=2;j++)
       {
-        for(int k=-1; k<=1; k++)
+        for(int k=-2; k<=2; k++)
        {
         if(y+j>=0 && x_center+k>0 && y+j<dHeight && x_center+k<dWidth)
         {

@@ -11,15 +11,16 @@ const string trackbarWindowName2 = "Trackbar2";
 const string trackbarWindowName3 = "Trackbar3";
 const string trackbarWindowName4 = "Trackbar4";
 const string trackbarWindowName5 = "Trackbar5";
-int P_NUM = 30;
+
+int P_NUM = 20;
+int B_MIN = 162;
+int G_MAX = 167;
+int R_MAX = 125;
+int L_NUM = 81;
 const int P_NUM_MAX = 100;
-int B_MIN = 144;
 const int B_LIM = 255;
-int G_MAX = 139;
 const int G_LIM = 255;
-int R_MAX = 111;
 const int R_LIM = 255;
-int L_NUM = 231;
 const int L_LIM = 480;
 
 

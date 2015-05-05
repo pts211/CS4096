@@ -1,4 +1,4 @@
-//camera.h
+//camera.h in /Navigation
 
 #ifndef CAMERA_H
 #define CAMERA_H
@@ -39,13 +39,14 @@ class camera
   
   public:
   
-  	camera(): cap(0), intercept(0), slope(0), pathisblocked(false), floorsign(""), P_NUM(30), B_MIN(144), G_MAX(139), R_MAX(111), L_NUM(455) {//createTrackBars();
+  	camera(): cap(0), intercept(0), slope(0), pathisblocked(false), floorsign(""), P_NUM(20), B_MIN(162), G_MAX(167), R_MAX(125), L_NUM(81) {//createTrackBars();
     };
   
-  	~camera() {};
+  	~camera() {cap.release();}
   
     void createTrackBars();
     // void on_trackbar(int, void*);
+  
 
   	//MUTATOR
   
