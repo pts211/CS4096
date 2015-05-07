@@ -1,0 +1,24 @@
+5
+node0
+node1
+node2
+node3
+node4
+2
+1 10 3 15
+2
+0 10 2 10
+3
+1 10 3 5 4 7
+3
+0 15 2 5 4 12
+2
+3 12 2 7
+
+//FORMAT
+Number of nodes
+Names of nodes
+Number of neighbors 
+NeighborIndex Weight NeighborIndex Weight NeighborIndex Weight....
+
+//index starts at 0
