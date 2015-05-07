@@ -109,7 +109,7 @@ void camera::update()
     }    
 	}		 
  
-  if(sign_count >= 10)
+  if(sign_count >= 30)
   {
     floorsign = "A";
   }
@@ -177,46 +177,6 @@ void camera::output()
     return;
 }
 
-void on_trackbar( int, void* )
-{//This function gets called whenever a
-    // trackbar position is changed
-}
-
-void camera::createTrackBars()
-{
-    //create window for trackbars
- 
-  namedWindow(trackbarWindowName1,1);
-  namedWindow(trackbarWindowName2,1);
-  namedWindow(trackbarWindowName3,1);
-  namedWindow(trackbarWindowName4,1);
-  namedWindow(trackbarWindowName5,1);
-
-  char TrackbarName1[50];
-  char TrackbarName2[50];
-  char TrackbarName3[50];
-  char TrackbarName4[50];
-  char TrackbarName5[50];
-    
- 
-    sprintf( TrackbarName1, "Edges", P_NUM_MAX);
-    sprintf( TrackbarName2, "B_MIN", B_LIM);
-    sprintf( TrackbarName3, "G_MAX", G_LIM);
-    sprintf( TrackbarName4, "R_MAX", R_LIM);    
-    sprintf( TrackbarName5, "L_NUM", L_LIM);
- 
-    createTrackbar( TrackbarName1, trackbarWindowName1, &P_NUM, P_NUM_MAX, on_trackbar);
-    createTrackbar( TrackbarName2, trackbarWindowName2, &B_MIN, B_LIM, on_trackbar );
-    createTrackbar( TrackbarName3, trackbarWindowName3, &G_MAX, G_LIM, on_trackbar );
-    createTrackbar( TrackbarName4, trackbarWindowName4, &R_MAX, R_LIM, on_trackbar );
-    createTrackbar( TrackbarName5, trackbarWindowName5, &L_NUM, L_LIM, on_trackbar );
-    //create trackbars and insert them into window
-    //3 parameters are: the address of the variable that is changing when the trackbar is moved(eg.H_LOW),
-    //the max value the trackbar can move (eg. H_HIGH), 
-    //and the function that is called whenever the trackbar is moved(eg. on_trackbar)
-    //    
-    return;
-}
 
 //ACCESSORS DEFINITIONS
 

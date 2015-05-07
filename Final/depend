@@ -1,0 +1,5 @@
+Navigation.o: Navigation.cpp Navigation.h camera.h Roomba.h \
+ RoombaSensors.h
+Roomba.o: Roomba.cpp Roomba.h RoombaSensors.h
+camera.o: camera.cpp camera.h
+main.o: main.cpp Navigation.h camera.h Roomba.h RoombaSensors.h

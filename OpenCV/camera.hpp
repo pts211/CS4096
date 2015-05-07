@@ -106,7 +106,7 @@ void camera::update(int P_NUM,int B_MIN,int G_MAX,int R_MAX,int L_NUM)
     }    
   }     
  
-  if(sign_count >= 10)
+  if(sign_count >= 30)
   {
     floorsign = "A";
   }

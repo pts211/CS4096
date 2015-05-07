@@ -1,4 +1,4 @@
-//camera.h in /Navigation
+//camera.h
 
 #ifndef CAMERA_H
 #define CAMERA_H
@@ -31,23 +31,18 @@ class camera
   
   	string floorsign; // "" if no sign is detected
    
-    int P_NUM;
-    int B_MIN;
-    int G_MAX;
-    int R_MAX;
-    int L_NUM;
+   int P_NUM;
+   int B_MIN;
+   int G_MAX;
+   int R_MAX;
+   int L_NUM;
   
   public:
   
-  	camera(): cap(0), intercept(0), slope(0), pathisblocked(false), floorsign(""), P_NUM(20), B_MIN(162), G_MAX(167), R_MAX(125), L_NUM(81) {//createTrackBars();
-    };
+  	camera(): P_NUM(20), B_MIN(85), G_MAX(167), R_MAX(102),L_NUM(81),cap(0), intercept(0), slope(0), pathisblocked(false), floorsign("") {};
   
   	~camera() {cap.release();}
   
-    void createTrackBars();
-    // void on_trackbar(int, void*);
-  
-
   	//MUTATOR
   
   	void update();

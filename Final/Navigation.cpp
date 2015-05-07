@@ -99,9 +99,9 @@ void Navigation::inputNodes(const char* filename)
 bool Navigation::travelFromSourceToSink(Node* source, Node* sink)
 {
   vector<Node*> path = findPath(source, sink); //should be (current, sink) with current starting at source
-  #ifdef DEBUG 
+  //#ifdef DEBUG 
   outputPath(path); 
-  #endif
+  //#endif
   cout << "size: " << path.size() << endl;
   walkPath(path);
   return true;
@@ -144,7 +144,7 @@ void Navigation::rotate(int degrees)
   int16_t speed = 50;
 
   // roomba.getSensors(Sensor::ALL).getAngle();
-  cout << "TURNING " << degrees << " DEGREES" << endl;
+  cout << "\t\t\t\t\t\t\t\t\t\tTURNING " << degrees << " DEGREES" << endl;
   cout << "\t\t\t\t\tSTOP DRIVE" << endl;
   roomba.drive(0,0);
   // roomba.getSensors(Sensor::ALL);
@@ -157,9 +157,9 @@ void Navigation::rotate(int degrees)
       // degreesRotated -= roomba.getSensors(Sensor::ALL).getAngle();
       if(roomba.getSensors(Sensor::ALL)) {
         degreesRotated += roomba.getSensor().getAngle();
-        cout << "Degrees Rotated: " << degreesRotated << endl;
+        //cout << "Degrees Rotated: " << degreesRotated << endl;
         // cout << "getAngle: " << roomba.getSensor().getAngle();
-        usleep(100000);
+        //usleep(50000);
       }
     }    
   }
@@ -170,9 +170,9 @@ void Navigation::rotate(int degrees)
     {
       // degreesRotated += roomba.getSensors(Sensor::ALL).getAngle();
       if(roomba.getSensors(Sensor::ALL)) {
-        cout << "Degrees Rotated: " << degreesRotated << endl;
+        //cout << "Degrees Rotated: " << degreesRotated << endl;
         degreesRotated -= roomba.getSensor().getAngle();
-        usleep(100000);
+        //usleep(50000);
       }
     }
   }
@@ -206,6 +206,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
   cout << "\t\t\t\t\tDRIVING STRAIGHT" << endl;
   roomba.drive(REG_SPEED, STRAIGHT);
   // cout << "start cam check loop" << endl;
+  cam.update();
   while(getFloorSign().empty() && !getPathIsBlocked())
   {
     // cout << "about to update" << endl;
@@ -226,7 +227,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
       { //arbitrary tolerances. slope will be 0 if we are going straight
         cout << "\t\t\t\t\tTURNING TO THE RIGHT" << endl;
         roomba.drive(TURN_SPEED, -1500);
-        while(cam.getslope() < -.1 && cam.getfloorsign().empty())
+        while(cam.getslope() < -.1 && getFloorSign().empty())
         {
           // rotate(5);
           cam.update();
@@ -240,7 +241,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
       {
         cout << "\t\t\t\t\tTURNING TO THE LEFT" << endl;
         roomba.drive(TURN_SPEED, 1500);
-        while(cam.getslope() > .1 && cam.getfloorsign().empty())
+        while(cam.getslope() > .1 && getFloorSign().empty())
         {
           // rotate(-5);
           cam.update();
@@ -256,6 +257,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
   if(!getFloorSign().empty())
   {
     cout << "got a floor sign" << endl;
+    cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
     //move forward just a bit more so we're on top of it.
     cout << "\t\t\t\t\tDRIVING STRAIGHT" << endl;
     roomba.drive(REG_SPEED, STRAIGHT); //temp arbitrary numbers
@@ -263,7 +265,7 @@ void Navigation::moveForwardUntilSignOrBlockage()
     // {
     //   cout << "[" << getPathIsBlocked() << ", " << getFloorSign() << ", " << cam.getslope() << "]" << endl;
     // }
-    sleep(2.5);
+    sleep(3.5);
   }
   cout << "end moveForwardUntilSignOrBlockage" << endl;
 }
@@ -316,6 +318,7 @@ void Navigation::walkPath(vector<Node*> path)
     // else if(!getFloorSign().empty())      
     {
       turnAtIntersection(path, i);
+      cam.update();
       // if(getFloorSign() == path[path.size()-1]->name)
       // {
       //   arrived = true;
@@ -326,6 +329,8 @@ void Navigation::walkPath(vector<Node*> path)
       // }
     }
   }
+  cout << "\t\t\t\t\tSTOP DRIVE" << endl;
+  roomba.drive(0,0);
 }
 
 void Navigation::turnAtIntersection(vector<Node*> path, int currentNode)
@@ -498,14 +503,24 @@ string Navigation::getFloorSign()
 
 string Navigation::_getFloorSign()
 {
+  double firstTurn = 11.61;
   double timePassed = ((double)clock() - (double)startTime)/CLOCKS_PER_SEC;
-  if (timePassed < 12)
+  cout << "timePassed: " << timePassed << endl;
+  if (timePassed < firstTurn)
   {
     return "";
   }
-  else if (timePassed < 14)
+  else if (timePassed < firstTurn + .09)
   {
-    return "A";
+    return "testA";
+  }
+  else if (timePassed < firstTurn + 7)
+  {
+    return "";
+  }
+  else if (timePassed < firstTurn + 7.09)
+  {
+    return "testB";
   }
   return "";
 }
